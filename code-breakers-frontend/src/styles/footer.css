@@ -1,24 +1,24 @@
-
 /* Estilo base para el contenedor del header */
-.header-container {
+.footer-container {
     display: flex;
-    grid-area: header; /* Especifica que es la zona del header en el grid */
+    grid-area: footer; /* Especifica que es la zona del header en el grid */
     flex-direction: row;
     justify-content: space-evenly;
     background-color: red;
     position: relative; /* Esto es importante si tienes elementos posicionados de manera absoluta dentro de este contenedor */
+    height: 10vh;
 }
 
 /* Tablet */
 @media (min-width: 768px) { 
-    .header-container {
+    .footer-container {
         /* Si necesitas cambios específicos para tablets, agrégalos aquí */
     }
 }
 
 /* Laptop */
 @media (min-width: 1024px) { 
-    .header-container {
+    .footer-container {
         font-size: 1.5rem;
         background-color: brown;
     }
@@ -26,7 +26,7 @@
 
 /* Escritorio */
 @media (min-width: 1280px) { 
-    .header-container {
+    .footer-container {
         /* Puedes modificar otros estilos aquí si es necesario */
     }
 }

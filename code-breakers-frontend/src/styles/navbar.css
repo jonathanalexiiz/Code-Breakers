@@ -1,0 +1,28 @@
+.nav-links{
+ display: flex;  
+ gap: 1rem;
+}
+
+/* Tablet */
+@media (min-width: 768px) { 
+    .nav-links {
+        /* Si necesitas cambios específicos para tablets, agrégalos aquí */
+        gap: 2rem;
+        
+    }
+}
+
+/* Laptop */
+@media (min-width: 1024px) { 
+    .nav-links {
+       gap: 3rem;
+    }
+}
+
+/* Escritorio */
+@media (min-width: 1280px) { 
+    .nav-links {
+        /* Puedes modificar otros estilos aquí si es necesario */
+        gap: 4rem;
+    }
+}
