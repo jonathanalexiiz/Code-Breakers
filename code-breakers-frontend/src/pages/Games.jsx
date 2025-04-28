@@ -7,7 +7,7 @@ const Game = () => {
         <section className="juegos-links">
             <ol>
                 <li>
-                    <Link to="/juego-esqueleto">
+                    <Link to="/esqueleto-portada">
                         Conociendo las partes del Esqueleto
                     </Link>
                 </li>
