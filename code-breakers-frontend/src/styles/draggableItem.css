@@ -1,0 +1,18 @@
+/* Elementos arrastrables */
+.draggable-item {
+    padding: .6rem .8rem;
+    /* margin: 8px; */
+    background: #f0f0f0;
+    border: 2px solid #333;
+    border-radius: 4px;
+    cursor: grab;
+    user-select: none;
+    font-weight: bold;
+  }
+  
+  .draggable-item.used {
+    background: #ccc;
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+  }

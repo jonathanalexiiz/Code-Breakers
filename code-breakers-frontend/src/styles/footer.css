@@ -1,12 +1,14 @@
 /* Estilo base para el contenedor del header */
 .footer-container {
     display: flex;
-    grid-area: footer; /* Especifica que es la zona del header en el grid */
+    grid-area: footer;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
+    align-items: center; /* Para centrar el contenido verticalmente */
     background-color: red;
-    position: relative; /* Esto es importante si tienes elementos posicionados de manera absoluta dentro de este contenedor */
-    height: 10vh;
+    position: relative;
+    padding: 15px 0; /* Espaciado vertical en lugar de height fija */
+    /* width: 100%; */
 }
 
 /* Tablet */
@@ -20,7 +22,7 @@
 @media (min-width: 1024px) { 
     .footer-container {
         font-size: 1.5rem;
-        background-color: brown;
+        background-color: bisque;
     }
 }
 
