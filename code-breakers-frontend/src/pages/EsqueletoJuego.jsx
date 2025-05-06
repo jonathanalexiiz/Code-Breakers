@@ -26,6 +26,7 @@ const EsqueletoJuego = () => {
   const [dragOverZone, setDragOverZone] = useState(null);
   
   const handleDrop = (zonaId, palabra) => {
+    
     setPalabrasColocadas(prev => ({
       ...prev,
       [zonaId]: palabra
