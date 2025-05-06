@@ -8,6 +8,7 @@ import Game from "./pages/Games";
 import EsqueletoPortada from "./pages/EsqueletoPortada";
 import EsqueletoJuegoReal from "./pages/EsqueletoJuego";
 import OtroJuegoPortada from "./pages/OtroJuegoPortada";
+import CrearJuego from "./pages/crearJuego";
 
 const App = () => {
   return (
@@ -22,7 +23,8 @@ const App = () => {
           <Route path="esqueleto-portada" element={<EsqueletoPortada />} />
           <Route path="otro-juego" element={<OtroJuegoPortada/>} />
           <Route path="esqueleto-juego-real" element={<EsqueletoJuegoReal/>} />
-          
+          <Route path="crear-juego" element={<CrearJuego />} />
+
         </Route>
       </Routes>
     </Router>
