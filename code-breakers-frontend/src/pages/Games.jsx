@@ -17,6 +17,11 @@ const Game = () => {
                         Otro juego educativo
                     </Link>
                 </li>
+                <li>
+                    <Link to="/crear-juego">
+                        Crear Juego
+                    </Link>
+                </li>
             </ol>
         </section>
     );
