@@ -1,35 +1,19 @@
-/* Zona de destino - reducir la opacidad del fondo */
-.drop-zone {
-    display: flex;
-    position: absolute;
-    width: 7rem;
-    height: 2rem;
-    border: 2px dashed #ddd;
-    border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.5);
-    justify-content: center;
-    align-items: center;
-    padding: 4px;
-  }
-  
-  .drop-zone.highlight {
-    border-color: #4CAF50;
-    background-color: rgba(76, 175, 80, 0.2);
-  }
-  
-  .drop-zone.filled {
-    border-color: #000;
-    border-style: solid;
-  }
-  
-  .word-content {
-    font-weight: bold;
-    color: #333;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .placeholder-text {
-    color: #999;
-    font-style: italic;
-  }
+.drop-target {
+  border: 3px dashed red;
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  font-size: 10px;
+  padding: 5px 5px;
+  text-align: center;
+  border-radius: 12px;
+  min-height: 50px;
+  width: 80px;
+  box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.4);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.drop-target.active {
+  background-color: #ffe6e6;
+  transform: scale(1.02);
+}
