@@ -1,50 +1,27 @@
 import React from "react";
 import "../styles/dropTarget.css";
 
-const DropTarget = ({ id, currentWord, onDrop, position, isOver, setIsOver }) => {
+const DropTarget = ({ onDropItem, isActive, itemDropped }) => {
   const handleDragOver = (e) => {
     e.preventDefault();
-    if (!currentWord) {
-      setIsOver(id);
-    }
   };
-  
-  const handleDragLeave = () => {
-    setIsOver(null);
-  };
-  
+
   const handleDrop = (e) => {
     e.preventDefault();
-    setIsOver(null);
-    
-    if (!currentWord) {
-      const word = e.dataTransfer.getData("text/plain");
-      onDrop(id, word);
-    }
+    const droppedItem = e.dataTransfer.getData("text/plain");
+    onDropItem(droppedItem);
   };
 
-  const isHighlighted = isOver === id && !currentWord;
-
   return (
-    <div
+    <div 
+      className={`drop-target ${isActive ? "active" : ""}`}
       onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`drop-zone ${isHighlighted ? 'highlight' : ''} ${currentWord ? 'filled' : ''}`}
-      style={{
-        position: 'absolute',
-        top: `${position.top}px`,
-        left: `${position.left}px`,
-      }}
     >
-      {currentWord ? (
-        <div className="word-content">
-          {currentWord}
-        </div>
+      {itemDropped ? (
+        <strong>{itemDropped}</strong>
       ) : (
-        <div className="placeholder-text">
-          Soltar aquí
-        </div>
+        isActive ? "Suelta aquí" : "Suelta aquí el paso #4"
       )}
     </div>
   );
