@@ -7,14 +7,19 @@ const Game = () => {
         <section className="juegos-links">
             <ol>
                 <li>
-                    <Link to="/esqueleto-portada">
-                        Conociendo las partes del Esqueleto
+                    <Link to="/portada-juego">
+                        Juego interactivo
                     </Link>
                 </li>
                 {/* Puedes agregar más juegos aquí */}
                 <li>
                     <Link to="/otro-juego">
                         Otro juego educativo
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/crear-juego">
+                        Crear Juego
                     </Link>
                 </li>
             </ol>

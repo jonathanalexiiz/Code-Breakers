@@ -1,7 +1,7 @@
-.juego-esqueleto{
+.portada-contenedor{
     width: 100vw;
     height: 100vh;
-    background-image: url('/fondo.webp'); /* Aquí pones la imagen */
+    background-image: url('/fondo2.webp'); /* Aquí pones la imagen */
     background-size: cover;
     background-position: center ;
     background-repeat: no-repeat;
@@ -10,7 +10,7 @@
     justify-content: center;
 }
 
-.contenedor-juego {
+.contenedor-boton {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,72 +20,25 @@
     /* border: 5px solid red; */
   }
 
-.lado-derecho{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    gap: 2rem;
-    /* border: 5px solid yellow; */
+.boton-jugar {
+  height: 2.5rem;
+  width: 6rem;
+  color: white;
+  border: none;
+  border-radius: .7rem;
+  background-color: #00fb08;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.titulo {
-    font-size: 1.5rem;
-    color: blue;
-    text-shadow: 2px 2px 4px black; /* Agrega sombra negra ligera */
-  }
-
-  .instrucciones {
-    font-size: 1rem;
-    font-weight: bold;
-    
-  }
-
 @media (min-width: 768px) {
-    .juego-esqueleto {
-       
- 
-    }
+  
   }
   
   @media (min-width: 1024px) {
-    .juego-esqueleto {
-        background-attachment: fixed; /* En laptops y PC */
-    }
-
-    .contenedor-juego{
-        flex-direction: row;
-        gap: 4rem;
-    }
     
-    .titulo {
-        font-size: 3rem;
-       
-      }
-    
-      .instrucciones {
-        font-size: 1.2rem;
-        
-      }
       
-      .lado-derecho {
-        transform: translate(-2rem, -2.3rem); /*Movimiento en X y en Y juntos */
-        gap: 4rem;
-      }
-
-      .boton-jugar {
-        padding: 1rem 2rem; /* Espaciado interno: arriba/abajo 1rem, lados 2rem */
-        background-color: purple; /* Color de fondo */
-        color: white; /* Color del texto */
-        font-size: 1rem; /* Tamaño de la letra */
-        font-weight: bold; /* Texto en negrita */
-        border: none; /* Sin borde */
-        border-radius: 1rem; /* Bordes redondeados */
-        cursor: pointer; /* Mano al pasar el mouse */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombrado para darle profundidad */
-    
-      }
+     
       
   }
   
