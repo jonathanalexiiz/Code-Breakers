@@ -1,28 +1,34 @@
 import React from "react";
-import "../styles/dropTarget.css";
+import "../styles/DropTarget.css"; // Asegúrate de tener estilos opcionales
 
-const DropTarget = ({ onDropItem, isActive, itemDropped }) => {
+const DropTarget = ({ isActive, itemDropped, onDropItem, posicion }) => {
+  // Permitir soltar elementos
+  const handleDrop = (e) => {
+    e.preventDefault();
+    onDropItem(); // Llama a la función del padre
+  };
+
+  // Permitir el arrastre encima de este contenedor
   const handleDragOver = (e) => {
     e.preventDefault();
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const droppedItem = e.dataTransfer.getData("text/plain");
-    onDropItem(droppedItem);
-  };
-
   return (
-    <div 
-      className={`drop-target ${isActive ? "active" : ""}`}
-      onDragOver={handleDragOver}
+    <div
+      className={`drop-target ${isActive ? "activo" : ""}`}
       onDrop={handleDrop}
+      onDragOver={handleDragOver}
     >
-      {itemDropped ? (
-        <strong>{itemDropped}</strong>
-      ) : (
-        isActive ? "Suelta aquí" : "Suelta aquí el paso #4"
-      )}
+      <div className="paso-numero">
+        <strong>Paso {posicion}:</strong>
+      </div>
+      <div className="contenido-drop">
+        {itemDropped ? (
+          <span>{itemDropped}</span>
+        ) : (
+          <span className="placeholder">Arrastra aquí</span>
+        )}
+      </div>
     </div>
   );
 };
