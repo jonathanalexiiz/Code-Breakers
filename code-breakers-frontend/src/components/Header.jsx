@@ -7,7 +7,7 @@ const Header = () => {
     return (
         <header className='header-container'>
             
-            <div> Juegos Interactivos </div>
+            <div className='titulo-header'> Juegos Interactivos </div>
             <Navbar/>
 
         </header>

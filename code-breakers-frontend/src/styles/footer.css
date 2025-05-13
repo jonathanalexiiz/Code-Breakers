@@ -5,9 +5,11 @@
     flex-direction: row;
     justify-content: center;
     align-items: center; /* Para centrar el contenido verticalmente */
-    background-color: red;
+    background-color: orange;
     position: relative;
-    padding: 15px 0; /* Espaciado vertical en lugar de height fija */
+    padding: 1.5rem 0; /* Espaciado vertical en lugar de height fija */
+    font-size: .9rem;
+    padding: 1.rem 1.5rem;
     /* width: 100%; */
 }
 
@@ -21,14 +23,9 @@
 /* Laptop */
 @media (min-width: 1024px) { 
     .footer-container {
-        font-size: 1.5rem;
-        background-color: bisque;
+        font-size: 1.2rem;
     }
 }
 
-/* Escritorio */
-@media (min-width: 1280px) { 
-    .footer-container {
-        /* Puedes modificar otros estilos aquí si es necesario */
-    }
+
 }
