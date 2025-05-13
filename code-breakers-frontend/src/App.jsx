@@ -9,7 +9,7 @@ import PortadaJuego from "./pages/PortadaJuego";
 import PrimerJuego from "./pages/PrimerJuego";
 import OtroJuegoPortada from "./pages/OtroJuegoPortada";
 import CrearJuego from "./pages/crearJuego";
-
+import Login from "./components/Login";
 const App = () => {
   return (
     <Router>
@@ -30,5 +30,7 @@ const App = () => {
     </Router>
   );
 };
-
+function App(){
+  return <Login />;
+}
 export default App;
