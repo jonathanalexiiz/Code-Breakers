@@ -3,45 +3,69 @@ import '../styles/login.css';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
+  const [error, setError] = useState({ email: '', password: '' });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+
+    if (value.trim() === '') {
+      setError({ ...error, [name]: `El campo ${name} es obligatorio` });
+    } else {
+      setError({ ...error, [name]: '' });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.email || !form.password) {
-      setError('Completa todos los campos');
-      return;
+    const newErrors = {
+      email: form.email ? '' : 'El email es obligatorio',
+      password: form.password ? '' : 'La contraseña es obligatoria',
+    };
+
+    setError(newErrors);
+
+    if (!newErrors.email && !newErrors.password) {
+      alert('Login exitoso (solo frontend)');
+      console.log('Datos:', form);
     }
-    setError('');
-    console.log('Inicio de sesión simulado:', form);
-    alert('Login exitoso (solo frontend)');
   };
 
   return (
     <div className="login-container">
-      <h2>Iniciar Sesión</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo electrónico"
-          value={form.email}
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={form.password}
-          onChange={handleChange}
-        />
-        {error && <p className="error">{error}</p>}
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2>🔐 Iniciar Sesión</h2>
+
+        <div className="form-group">
+          <label htmlFor="email">Correo electrónico</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="ejemplo@correo.com"
+            value={form.email}
+            onChange={handleChange}
+            className={error.email ? 'input-error' : ''}
+          />
+          {error.email && <span className="error">{error.email}</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="password">Contraseña</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="••••••••"
+            value={form.password}
+            onChange={handleChange}
+            className={error.password ? 'input-error' : ''}
+          />
+          {error.password && <span className="error">{error.password}</span>}
+        </div>
+
         <button type="submit">Ingresar</button>
       </form>
     </div>
   );
 };
+
 export default Login;
