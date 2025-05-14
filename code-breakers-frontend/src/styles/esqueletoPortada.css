@@ -1,0 +1,44 @@
+.portada-contenedor{
+    width: 100vw;
+    height: 100vh;
+    background-image: url('/fondo2.webp'); /* Aquí pones la imagen */
+    background-size: cover;
+    background-position: center ;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contenedor-boton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    /* border: 5px solid red; */
+  }
+
+.boton-jugar {
+  height: 2.5rem;
+  width: 6rem;
+  color: white;
+  border: none;
+  border-radius: .7rem;
+  background-color: #00fb08;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+@media (min-width: 768px) {
+  
+  }
+  
+  @media (min-width: 1024px) {
+    
+      
+     
+      
+  }
+  
