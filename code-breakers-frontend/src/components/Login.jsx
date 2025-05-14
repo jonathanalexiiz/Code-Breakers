@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // 👈 Importar
 import '../styles/login.css';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState({ email: '', password: '' });
+  const navigate = useNavigate(); // 👈 Hook para redirigir
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,6 +20,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const newErrors = {
       email: form.email ? '' : 'El email es obligatorio',
       password: form.password ? '' : 'La contraseña es obligatoria',
@@ -25,9 +28,15 @@ const Login = () => {
 
     setError(newErrors);
 
+    // Aquí validas credenciales (puedes personalizar esto)
+    const isValid = form.email === 'admin@correo.com' && form.password === '123456';
+
     if (!newErrors.email && !newErrors.password) {
-      alert('Login exitoso (solo frontend)');
-      console.log('Datos:', form);
+      if (isValid) {
+        navigate('/home'); // 👈 Redirige si es válido
+      } else {
+        alert('Credenciales incorrectas');
+      }
     }
   };
 
