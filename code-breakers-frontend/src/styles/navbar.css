@@ -1,76 +1,28 @@
-/* Contenedor que controla el posicionamiento */
-.navbar-wrapper {
-    position: relative;
+.nav-links{
+ display: flex;  
+ gap: 1rem;
 }
 
-/* Botón hamburguesa */
-.hamburger {
-    font-size: 2rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    right: -5rem;
-    color: #333;
-}
-
-/* Contenedor del menú desplegable */
-.nav-links {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 3.5rem; /* debajo del botón */
-    right: 1rem;
-    background-color: white;
-    padding: 1rem;
-    width: 200px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 15;
-}
-
-.nav-links.open {
-    display: flex;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: #333;
-    padding: 0.5rem 0;
-}
-
-/* Pantallas grandes: menú horizontal */
-@media (min-width: 768px) {
-    .hamburger {
-        display: none;
-    }
-
+/* Tablet */
+@media (min-width: 768px) { 
     .nav-links {
-        display: flex ;
-        position: static;
-        flex-direction: row;
-        background: none;
-        box-shadow: none;
-        padding: 0;
-        padding: 0.5rem 4rem;
-        width: auto;
-        justify-content: flex-end;
-    }
-
-    .navbar-wrapper {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        padding-right: 2rem;
+        /* Si necesitas cambios específicos para tablets, agrégalos aquí */
+        gap: 2rem;
+        
     }
 }
 
-@media (min-width: 1024px) {
+/* Laptop */
+@media (min-width: 1024px) { 
     .nav-links {
-       
-        /* border: 5px solid white; */
+       gap: 3rem;
+    }
+}
+
+/* Escritorio */
+@media (min-width: 1280px) { 
+    .nav-links {
+        /* Puedes modificar otros estilos aquí si es necesario */
         gap: 4rem;
     }
-
-
 }
-

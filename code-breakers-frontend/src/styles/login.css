@@ -1,9 +1,21 @@
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(145deg, #e0eafc, #cfdef3);
+  min-height: 100vh;
+}
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
   height: 100vh;
-  background: linear-gradient(145deg, #e0eafc, #cfdef3);
 }
 
 .login-form {
@@ -42,7 +54,7 @@
 }
 
 .input-error {
-  border: 1px solid orangered;
+  border: 1px solid red;
 }
 
 .error {
@@ -65,4 +77,31 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+/* ✅ Diseño responsive para tablets y móviles */
+@media (max-width: 768px) {
+  .login-form {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-form {
+    padding: 20px;
+  }
+
+  .login-form h2 {
+    font-size: 20px;
+  }
+
+  .form-group input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  button {
+    font-size: 15px;
+    padding: 10px;
+  }
 }
