@@ -1,0 +1,150 @@
+.juego-contenedor {
+    /* border: 5px solid orange; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-height: 100%;
+    width: 100vw;
+    background-image: url('/cocina.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    gap: 2rem;
+}
+
+.tit-bot-contenedor {
+    display: flex;
+    gap: .5rem;
+    margin: 1rem 0 0 1rem;
+}
+
+.titulo-contenedor {
+    /* border: 5px solid black; */
+    text-align: center;
+    color: #030303;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.botones-contenedor {
+    /* border: 5px solid black; */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.btn-verificar {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    height: 2.7rem;
+    width: 5.6rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .btn-verificar:hover:not(:disabled) {
+    background-color: #43a047;
+    transform: scale(1.03);
+  }
+  
+  .btn-verificar:disabled {
+    background-color: #a5d6a7;
+    cursor: not-allowed;
+  }
+
+  .btn-salir {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .btn-salir:hover {
+    transform: scale(1.1);
+  }
+  
+  .icono-salir {
+    width: 32px;
+    height: 32px;
+  }
+  
+.enunciado-imagen-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.imagen-contenedor {
+    height: auto;
+    width: 20rem;
+}
+
+.imagen-contenedor img {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+    border-radius: 0.6rem;
+    object-fit: contain;
+    display: block;
+}
+
+.enunciado-contenedor {
+    text-align: center;
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.arr-opc-contenedor {
+    /* border: 5px solid orange; */
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap; /* por si es responsive */
+    justify-content: center;
+}
+
+.arrastre-contenedor {
+    /* border: 5px solid rebeccapurple; */
+    display: flex;
+    flex-direction: column; 
+
+}
+
+.opciones-contenedor{
+    /* border: 5px solid rebeccapurple; */
+    display: flex;
+    flex-direction: column;
+    margin-top: 3rem;
+}
+
+/* ✅ NUEVO sistema unificado de mensajes */
+.mensaje-feedback {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 1.2rem;
+    max-width: 60%;
+    transition: all 0.3s ease;
+}
+
+.mensaje-feedback.error {
+    background-color: #ffe6e6;
+    color: #a10000;
+    border: 2px solid #ff4d4d;
+}
+
+.mensaje-feedback.exito {
+    background-color: #e6ffe6;
+    color: #087408;
+    border: 2px solid #40c057;
+}
+
+/* ❌ ELIMINADOS: ya no se usan con el nuevo sistema */
+.mensaje-final { display: none; }
+.mensaje-error { display: none; }
