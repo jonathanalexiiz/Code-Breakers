@@ -1,0 +1,6 @@
+.main-container {
+    grid-area: main; /* Especifica que es la zona del header en el grid */
+    /* border: 5px solid blue; */
+    
+  }
+  
