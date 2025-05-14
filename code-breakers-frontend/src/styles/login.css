@@ -6,7 +6,7 @@ body, html {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(145deg, #e0eafc, #cfdef3);
+  background: linear-gradient(145deg, #f4f6fb, #dce1ea);
   min-height: 100vh;
 }
 
@@ -19,10 +19,10 @@ body, html {
 }
 
 .login-form {
-  background-color: #fff;
+  background-color: #ffffff;
   padding: 30px 40px;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   width: 100%;
   max-width: 400px;
 }
@@ -30,7 +30,7 @@ body, html {
 .login-form h2 {
   margin-bottom: 20px;
   text-align: center;
-  color: #333;
+  color: #1e2a38;
 }
 
 .form-group {
@@ -42,13 +42,13 @@ body, html {
 .form-group label {
   margin-bottom: 6px;
   font-weight: bold;
-  color: #555;
+  color: #34495e;
 }
 
 .form-group input {
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #b0bec5;
   font-size: 15px;
   transition: border 0.3s;
 }
@@ -67,7 +67,7 @@ button {
   width: 100%;
   padding: 12px;
   border: none;
-  background-color: #007bff;
+  background-color: #4a90e2;
   color: white;
   font-size: 16px;
   border-radius: 8px;
@@ -76,10 +76,10 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #357abd;
 }
 
-/* ✅ Diseño responsive para tablets y móviles */
+/* Responsive */
 @media (max-width: 768px) {
   .login-form {
     padding: 25px;
