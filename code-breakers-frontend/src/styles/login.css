@@ -63,7 +63,7 @@ body, html {
   margin-top: 5px;
 }
 
-button {
+.btn-login {
   width: 100%;
   padding: 12px;
   border: none;
@@ -75,7 +75,7 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+.btn-login:hover {
   background-color: #0056b3;
 }
 

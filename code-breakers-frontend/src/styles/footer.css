@@ -5,9 +5,10 @@
     flex-direction: row;
     justify-content: center;
     align-items: center; /* Para centrar el contenido verticalmente */
-    background-color: red;
+    background-color: #16213e;
+    color: white;
     position: relative;
-    padding: 15px 0; /* Espaciado vertical en lugar de height fija */
+    padding: 1.7rem 0; /* Espaciado vertical en lugar de height fija */
     /* width: 100%; */
 }
 
@@ -22,7 +23,7 @@
 @media (min-width: 1024px) { 
     .footer-container {
         font-size: 1.5rem;
-        background-color: bisque;
+        /* background-color: bisque; */
     }
 }
 

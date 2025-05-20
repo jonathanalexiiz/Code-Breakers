@@ -4,9 +4,19 @@
     display: flex;
     grid-area: header; /* Especifica que es la zona del header en el grid */
     flex-direction: row;
-    justify-content: space-evenly;
-    background-color: red;
+    justify-content: center;
+    align-items: center ;
+    color: white;
+    background-color: #16213e;
     position: relative; /* Esto es importante si tienes elementos posicionados de manera absoluta dentro de este contenedor */
+}
+
+.titulo-header {
+    /* border: 5px solid white; */
+    font-size: 1.3rem;
+    /* height: 2rem; */
+    
+
 }
 
 /* Tablet */
@@ -20,14 +30,15 @@
 /* Laptop */
 @media (min-width: 1024px) { 
     .header-container {
-        font-size: 1.5rem;
-        background-color: bisque;
+       
+        /* background-color: bisque; */
     }
 }
 
 /* Escritorio */
 @media (min-width: 1280px) { 
     .header-container {
+         font-size: 1.3rem;
         /* Puedes modificar otros estilos aquí si es necesario */
 
     }

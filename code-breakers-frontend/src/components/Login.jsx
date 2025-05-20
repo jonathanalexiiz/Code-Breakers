@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 👈 Importar
+import { useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState({ email: '', password: '' });
-  const navigate = useNavigate(); // 👈 Hook para redirigir
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,12 +28,12 @@ const Login = () => {
 
     setError(newErrors);
 
-    // Aquí validas credenciales (puedes personalizar esto)
-    const isValid = form.email === 'admin@correo.com' && form.password === '123456';
+    const isValid = form.email === 'admin@correo.com' && form.password === '12345';
 
     if (!newErrors.email && !newErrors.password) {
       if (isValid) {
-        navigate('/home'); // 👈 Redirige si es válido
+        onLogin();          // <-- Aquí se notifica a App que el usuario se autenticó
+        navigate('/home');  // Luego se navega a la ruta protegida
       } else {
         alert('Credenciales incorrectas');
       }
@@ -71,7 +71,7 @@ const Login = () => {
           {error.password && <span className="error">{error.password}</span>}
         </div>
 
-        <button type="submit">Ingresar</button>
+        <button className ="btn-login" type="submit">Ingresar</button>
       </form>
     </div>
   );
