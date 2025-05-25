@@ -13,6 +13,9 @@ import CrearJuego from "./pages/crearJuego";
 import Layout from "./components/Layout";
 import Login from "./components/Login";
 
+// ✅ Importa tu test de conexión
+import TestAPI from "./components/TestAPI";
+
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -21,31 +24,30 @@ const App = () => {
   };
 
   return (
-    <Router>
-      <Routes>
+    <>
+      <TestAPI /> {/* Ejecuta el test al cargar la app */}
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login onLogin={handleLogin} />} />
+          {isAuthenticated ? (
+            <Route path="/" element={<Layout />}>
+              <Route path="home" element={<Home />} />
+              <Route path="about" element={<About />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="games" element={<Game />} />
+              <Route path="portada-juego" element={<PortadaJuego />} />
+              <Route path="otro-juego" element={<OtroJuegoPortada />} />
+              <Route path="primer-juego" element={<PrimerJuego />} />
+              <Route path="crear-juego" element={<CrearJuego />} />
+              <Route path="/test-api" element={<TestAPI />} />
 
-        {/* Ruta login sin Layout, se pasa onLogin */}
-        <Route path="/" element={<Login onLogin={handleLogin} />} />
-
-        {/* Rutas protegidas con Layout */}
-        {isAuthenticated ? (
-          <Route path="/" element={<Layout />}>
-            <Route path="home" element={<Home />} />
-            <Route path="about" element={<About />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="games" element={<Game />} />
-            <Route path="portada-juego" element={<PortadaJuego />} />
-            <Route path="otro-juego" element={<OtroJuegoPortada />} />
-            <Route path="primer-juego" element={<PrimerJuego />} />
-            <Route path="crear-juego" element={<CrearJuego />} />
-          </Route>
-        ) : (
-          // Si no está autenticado, redirige cualquier ruta protegida al login
-          <Route path="*" element={<Navigate to="/" />} />
-        )}
-
-      </Routes>
-    </Router>
+            </Route>
+          ) : (
+            <Route path="*" element={<Navigate to="/" />} />
+          )}
+        </Routes>
+      </Router>
+    </>
   );
 };
 
