@@ -8,7 +8,7 @@ const TestAPI = () => {
       .catch(err => console.error('❌ Error de conexión:', err));
   }, []);
 
-  return <div>Probando conexión con Laravel...</div>;
+  return null;
 };
 
 export default TestAPI;
