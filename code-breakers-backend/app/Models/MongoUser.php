@@ -13,8 +13,19 @@ class MongoUser extends Eloquent implements AuthenticatableContract, JWTSubject
 
     protected $connection = 'mongodb';
     protected $collection = 'users';
-    protected $fillable = ['name', 'email', 'password'];
-    protected $hidden = ['password'];
+
+    // public $timestamps = false; //  No usar created_at / updated_at
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role', // ✅ nuevo campo
+    ];
+
+    protected $hidden = [
+        'password',
+    ];
 
     public function getJWTIdentifier()
     {
