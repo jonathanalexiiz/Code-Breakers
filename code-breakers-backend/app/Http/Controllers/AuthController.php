@@ -14,7 +14,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'name'     => 'required|string',
-            'email'    => 'required|email|unique:mongodb.users,email', // conexión Mongo
+            'email'    => 'required|email|unique:mongodb.users,email',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -71,6 +71,25 @@ class AuthController extends Controller
             return response()->json(['message' => '🚪 Sesión cerrada']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Token inválido o ya expirado'], 401);
+        }
+    }
+
+    // 🔁 Cambiar contraseña del usuario autenticado
+    public function changePassword(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            $request->validate([
+                'new_password' => 'required|string|min:6|confirmed',
+            ]);
+
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return response()->json(['message' => '🔒 Contraseña actualizada correctamente']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Token inválido o expirado'], 401);
         }
     }
 }

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/axiosConfig';
 import '../styles/login.css';
 
 const Login = ({ onLogin }) => {
   const [form, setForm] = useState({ email: '', password: '' });
-  const [error, setError] = useState({ email: '', password: '' });
+  const [error, setError] = useState({ email: '', password: '', general: '' });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -12,31 +13,47 @@ const Login = ({ onLogin }) => {
     setForm({ ...form, [name]: value });
 
     if (value.trim() === '') {
-      setError({ ...error, [name]: `El campo ${name} es obligatorio` });
+      setError((prev) => ({ ...prev, [name]: `El campo ${name} es obligatorio` }));
     } else {
-      setError({ ...error, [name]: '' });
+      setError((prev) => ({ ...prev, [name]: '', general: '' }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {
       email: form.email ? '' : 'El email es obligatorio',
       password: form.password ? '' : 'La contraseña es obligatoria',
     };
+    setError((prev) => ({ ...prev, ...newErrors }));
 
-    setError(newErrors);
+    if (newErrors.email || newErrors.password) return;
 
-    const isValid = form.email === 'admin@correo.com' && form.password === '12345';
+    try {
+      // Petición real al backend Laravel
+      const res = await api.post('/login', {
+        email: form.email,
+        password: form.password,
+      });
 
-    if (!newErrors.email && !newErrors.password) {
-      if (isValid) {
-        onLogin();          // <-- Aquí se notifica a App que el usuario se autenticó
-        navigate('/home');  // Luego se navega a la ruta protegida
-      } else {
-        alert('Credenciales incorrectas');
-      }
+      const token = res.data.token;
+
+      // Guardar el token en localStorage
+      localStorage.setItem('token', token);
+
+      // Llamamos al callback que indica que el usuario está autenticado
+      onLogin();
+
+      // Redirigimos a la página protegida
+      navigate('/home');
+
+    } catch (err) {
+      console.error(err);
+      setError((prev) => ({
+        ...prev,
+        general: 'Credenciales incorrectas o error del servidor',
+      }));
     }
   };
 
@@ -71,7 +88,9 @@ const Login = ({ onLogin }) => {
           {error.password && <span className="error">{error.password}</span>}
         </div>
 
-        <button className ="btn-login" type="submit">Ingresar</button>
+        {error.general && <p className="error">{error.general}</p>}
+
+        <button className="btn-login" type="submit">Ingresar</button>
       </form>
     </div>
   );

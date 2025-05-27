@@ -7,20 +7,17 @@ use Exception;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
-class JwtMiddleware extends BaseMiddleware
+class JwtMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            // Verifica si hay un token válido
+            // Intentar autenticar al usuario desde el token
             $user = JWTAuth::parseToken()->authenticate();
 
-            // ✅ Forma compatible de establecer el usuario autenticado
-            $request->setUserResolver(function () use ($user) {
-                return $user;
-            });
+            // Establece el usuario autenticado manualmente
+            $request->setUserResolver(fn () => $user);
 
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
