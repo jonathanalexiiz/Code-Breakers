@@ -9,12 +9,12 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    // 🟢 Registro de usuario
+    // Registro de usuario
     public function register(Request $request)
     {
         $request->validate([
             'name'     => 'required|string',
-            'email'    => 'required|email|unique:mongodb.users,email', // conexión Mongo
+            'email'    => 'required|email|unique:mongodb.users,email',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -32,7 +32,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // 🟡 Login de usuario
+    // Login de usuario
     public function login(Request $request)
     {
         $request->validate([
@@ -52,7 +52,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // 🔐 Ver perfil (requiere token válido)
+    // Ver perfil (requiere token válido)
     public function profile()
     {
         try {
@@ -63,7 +63,7 @@ class AuthController extends Controller
         }
     }
 
-    // 🔒 Logout (invalida el token actual)
+    // Logout (invalida el token actual)
     public function logout()
     {
         try {
@@ -71,6 +71,25 @@ class AuthController extends Controller
             return response()->json(['message' => '🚪 Sesión cerrada']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Token inválido o ya expirado'], 401);
+        }
+    }
+
+    // Cambiar contraseña del usuario autenticado
+    public function changePassword(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            $request->validate([
+                'new_password' => 'required|string|min:6|confirmed',
+            ]);
+
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return response()->json(['message' => '🔒 Contraseña actualizada correctamente']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Token inválido o expirado'], 401);
         }
     }
 }
