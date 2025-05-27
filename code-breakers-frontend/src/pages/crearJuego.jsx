@@ -2,22 +2,21 @@ import React, { useState } from 'react';
 import '../styles/crearJuego.css';
 
 export default function DocenteActividad() {
-  const [question, setQuestion] = useState('');
-  const [steps, setSteps] = useState(['']);
-  const [correctSteps, setCorrectSteps] = useState([]);
-  const [shuffledSteps, setShuffledSteps] = useState([]);
-  const [background, setBackground] = useState(null);
-  const [isPreview, setIsPreview] = useState(false);
-  const [answers, setAnswers] = useState([]);
-  const [dragItem, setDragItem] = useState(null);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [message, setMessage] = useState('');
+  const [question, setQuestion]          = useState('');
+  const [steps, setSteps]                = useState(['']);
+  const [correctSteps, setCorrectSteps]  = useState([]);
+  const [shuffledSteps, setShuffledSteps]= useState([]);
+  const [background, setBackground]      = useState(null);
+  const [isPreview, setIsPreview]        = useState(false);
+  const [answers, setAnswers]            = useState([]);
+  const [dragItem, setDragItem]          = useState(null);
+  const [currentStep, setCurrentStep]    = useState(0);
+  const [message, setMessage]            = useState('');
 
+  /* ---------- Handlers ---------- */
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setBackground(URL.createObjectURL(file));
-    }
+    if (file) setBackground(URL.createObjectURL(file));
   };
 
   const handleDragStart = (item) => {
@@ -29,8 +28,8 @@ export default function DocenteActividad() {
     if (dragItem !== null && index === currentStep) {
       const correctItem = correctSteps[currentStep];
       if (dragItem === correctItem) {
-        const newAnswers = [...answers];
-        newAnswers[index] = dragItem;
+        const newAnswers   = [...answers];
+        newAnswers[index]  = dragItem;
         setAnswers(newAnswers);
         setCurrentStep(currentStep + 1);
         setDragItem(null);
@@ -52,17 +51,15 @@ export default function DocenteActividad() {
     setSteps(newSteps);
   };
 
-  const addStep = () => {
-    setSteps([...steps, '']);
-  };
+  const addStep = () => setSteps([...steps, '']);
 
   const startPreview = () => {
-    const filtered = steps.filter((s) => s.trim() !== '');
+    const filtered          = steps.filter((s) => s.trim() !== '');
     setCorrectSteps(filtered);
     setAnswers(new Array(filtered.length).fill(null));
     setCurrentStep(0);
     setMessage('');
-    const shuffled = [...filtered].sort(() => Math.random() - 0.5);
+    const shuffled          = [...filtered].sort(() => Math.random() - 0.5);
     setShuffledSteps(shuffled);
     setIsPreview(true);
   };
@@ -75,17 +72,33 @@ export default function DocenteActividad() {
     setDragItem(null);
   };
 
+  /* Nuevo: guardar y mostrar confirmación */
+  const handleSave = () => {
+    // Aquí iría tu lógica real de persistencia (llamada a API, etc.).
+    setMessage('✅ ¡Actividad guardada con éxito!');
+    /* Navegamos de vuelta al editor después de 1.5 s */
+    setTimeout(() => {
+      setMessage('');
+      resetPreview();
+    }, 1500);
+  };
+
+  /* ---------- UI ---------- */
   return (
     <div className="actividad-container">
+      {/* --------- Editor --------- */}
       {!isPreview ? (
         <div className="editor">
           <h2>Crear nueva actividad interactiva</h2>
+
           <textarea
             placeholder="Escribe la pregunta aquí"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
+
           <input type="file" accept="image/*" onChange={handleImageUpload} />
+
           <h4>Pasos esperados en orden correcto:</h4>
           {steps.map((step, idx) => (
             <input
@@ -95,19 +108,29 @@ export default function DocenteActividad() {
               onChange={(e) => handleStepChange(idx, e.target.value)}
             />
           ))}
-          <button className="add-step" onClick={addStep}>+ Agregar paso</button>
+
+          <button className="add-step" onClick={addStep}>
+            + Agregar paso
+          </button>
+
           <div className="editor-buttons">
             <button onClick={startPreview}>Vista previa del juego</button>
           </div>
         </div>
       ) : (
+        /* --------- Vista previa --------- */
         <div
           className="preview"
-          style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}
+          style={{
+            backgroundImage: `url(${background})`,
+            backgroundSize: 'cover',
+          }}
         >
           <div className="overlay">
             <h2>{question}</h2>
+
             <div className="interactive-area">
+              {/* Zonas de destino */}
               <div className="drop-zones">
                 {answers.map((answer, idx) => (
                   <div
@@ -116,29 +139,38 @@ export default function DocenteActividad() {
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={() => handleDrop(idx)}
                   >
-                    {answer ? <span>{answer}</span> : <span className="placeholder">Suelta aquí</span>}
+                    {answer ? (
+                      <span>{answer}</span>
+                    ) : (
+                      <span className="placeholder">Suelta aquí</span>
+                    )}
                   </div>
                 ))}
               </div>
+
+              {/* Ítems arrastrables */}
               <div className="draggable-items">
-                {shuffledSteps.map((step, idx) => (
-                  !answers.includes(step) && (
-                    <div
-                      key={idx}
-                      className="draggable"
-                      draggable
-                      onDragStart={() => handleDragStart(step)}
-                    >
-                      {step}
-                    </div>
-                  )
-                ))}
+                {shuffledSteps.map(
+                  (step, idx) =>
+                    !answers.includes(step) && (
+                      <div
+                        key={idx}
+                        className="draggable"
+                        draggable
+                        onDragStart={() => handleDragStart(step)}
+                      >
+                        {step}
+                      </div>
+                    )
+                )}
               </div>
             </div>
+
             {message && <div className="message">{message}</div>}
+
             <div className="preview-buttons">
               <button onClick={resetPreview}>Volver al editor</button>
-              <button>Guardar y salir</button>
+              <button onClick={handleSave}>Guardar y salir</button>
             </div>
           </div>
         </div>
