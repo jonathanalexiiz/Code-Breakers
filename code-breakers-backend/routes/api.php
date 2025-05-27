@@ -3,19 +3,18 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AuthController;
-use App\Http\Middleware\JwtMiddleware; // 👈 usamos la clase directamente
 
-// 🟢 Rutas públicas
+// Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// 🔐 Rutas protegidas con JWT usando clase directamente
+// Rutas protegidas con JWT usando clase directamente
 Route::middleware(['jwt.verify'])->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
 
-    // 🔐 Ruta protegida de prueba con JWT
+    // Ruta protegida de prueba con JWT
     Route::get('/ping-protegido', function () {
         return response()->json([
             'message' => '🔐 Token válido, acceso permitido'
@@ -23,17 +22,7 @@ Route::middleware(['jwt.verify'])->group(function () {
     });
 });
 
-// 🔍 Ruta de verificación directa del middleware
-Route::get('/verificar-middleware', function () {
-    return \App\Http\Middleware\JwtMiddleware::class;
-});
-
-// 🔧 Ruta de prueba rápida sin autenticación
-Route::get('/ping', function () {
-    return response()->json(['message' => '✅ Laravel funciona correctamente']);
-});
-
-// 🔍 Prueba de conexión a MongoDB
+// Prueba de conexión a MongoDB
 Route::get('/test-mongodb', function () {
     try {
         $users = DB::connection('mongodb')->table('users')->limit(5)->get();
@@ -51,7 +40,7 @@ Route::get('/test-mongodb', function () {
     }
 });
 
-// 🔍 Prueba de conexión a MySQL
+// Prueba de conexión a MySQL
 Route::get('/test-mysql', function () {
     try {
         $tables = DB::connection('mysql')->select('SHOW TABLES');
