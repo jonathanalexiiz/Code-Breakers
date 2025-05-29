@@ -40,7 +40,7 @@ Route::get('/test-mongodb', function () {
     }
 });
 
-// Prueba de conexión a MySQL
+// lsPrueba de conexión a MySQL
 Route::get('/test-mysql', function () {
     try {
         $tables = DB::connection('mysql')->select('SHOW TABLES');

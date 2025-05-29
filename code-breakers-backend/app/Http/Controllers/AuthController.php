@@ -14,13 +14,15 @@ class AuthController extends Controller
     {
         $request->validate([
             'name'     => 'required|string',
-            'email'    => 'required|email|unique:mongodb.users,email',
+            'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
+            'role'     => 'nullable|in:docente,estudiante',
         ]);
 
         $user = MongoUser::create([
             'name'     => $request->name,
             'email'    => $request->email,
+            'role'     => $request->role ?? 'estudiante', // Valor por defecto si no se envía
             'password' => Hash::make($request->password),
         ]);
 
