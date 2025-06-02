@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'mongodb'),
 
     /*
     |--------------------------------------------------------------------------
@@ -117,7 +117,7 @@ return [
             'dsn'      => env('DB_MONGO_DSN', ''),
             'host'     => env('DB_MONGO_HOST', '127.0.0.1'),
             'port'     => env('DB_MONGO_PORT', 27017),
-            'database' => env('DB_MONGO_DATABASE', 'auth'),
+            'database' => env('DB_DATABASE', 'auth'),
             'username' => env('DB_MONGO_USERNAME', ''),
             'password' => env('DB_MONGO_PASSWORD', ''),
             'options'  => []
