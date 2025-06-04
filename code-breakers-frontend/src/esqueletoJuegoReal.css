@@ -1,0 +1,100 @@
+/* Contenedor principal del juego */
+.esqueleto-juego-container {
+  background-image: url('/fondo.webp'); /* Usamos el mismo fondo que la portada */
+  background-size: cover;
+  background-position: center ;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Título del juego */
+.juego-titulo {
+  text-align: center;
+  color: #000; /* O el color que quieras */
+  font-size: 2rem;
+  text-shadow: 2px 2px 4px white; /* Para que resalte sobre el fondo */
+}
+
+/* Contenido general del juego */
+.juego-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+  /* border: 5px solid yellow; */
+
+}
+
+/* Imagen del esqueleto con las zonas */
+.imagen-esqueleto {
+  position: relative;
+  width: 20rem;
+  height: 30rem;
+  background-image: url('/esqueleto.webp');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* border: 5px solid black; */
+}
+
+/* Área de los controles (reset, mensaje) */
+.controles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Para centrar los elementos dentro también */
+  padding: .6rem;
+  gap: 1.3rem;
+  /* border: 5px solid green; */
+}
+
+/* Botón de reiniciar */
+.reset-button {
+  height: 2.5rem;
+  width: 6rem;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: .7rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Mensaje de éxito */
+.success-message {
+  height: 3rem;
+  width: 12rem;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  
+  /* Centramos */
+  display: flex; /* para centrar el texto */
+  justify-content: center; /* centra horizontalmente el texto */
+  align-items: center; /* centra verticalmente el texto */
+  text-align: center;
+}
+
+
+/* Palabras disponibles para arrastrar */
+.palabras-container {
+  display: flex;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 20rem;
+  padding: 0.8rem;
+  gap: .9rem;
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo suave para que se lean bien */
+  border-radius: .8rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
