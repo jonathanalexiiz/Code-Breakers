@@ -1,177 +1,241 @@
 import React, { useState } from 'react';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import TextAlign from '@tiptap/extension-text-align';
+import Image from '@tiptap/extension-image';
 import '../styles/crearJuego.css';
 
 export default function DocenteActividad() {
-  const [question, setQuestion]          = useState('');
-  const [steps, setSteps]                = useState(['']);
-  const [correctSteps, setCorrectSteps]  = useState([]);
-  const [shuffledSteps, setShuffledSteps]= useState([]);
-  const [background, setBackground]      = useState(null);
-  const [isPreview, setIsPreview]        = useState(false);
-  const [answers, setAnswers]            = useState([]);
-  const [dragItem, setDragItem]          = useState(null);
-  const [currentStep, setCurrentStep]    = useState(0);
-  const [message, setMessage]            = useState('');
+  const [title, setTitle] = useState('');
+  const [ageGroup, setAgeGroup] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [steps, setSteps] = useState(['']);
+  const [referenceImages, setReferenceImages] = useState([]);
+  const [background, setBackground] = useState(null);
+  const [correctSteps, setCorrectSteps] = useState([]);
+  const [shuffledSteps, setShuffledSteps] = useState([]);
+  const [answers, setAnswers] = useState([]);
+  const [dragItem, setDragItem] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [totalErrors, setTotalErrors] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
+  const [message, setMessage] = useState('');
 
-  /* ---------- Handlers ---------- */
+  const limits = { facil: 6, intermedio: 8, dificil: 10 };
+  const maxErrors = { facil: Infinity, intermedio: 3, dificil: 1 };
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      Image,
+    ],
+    content: '<p>Escribe la descripción aquí...</p>',
+  });
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) setBackground(URL.createObjectURL(file));
   };
 
-  const handleDragStart = (item) => {
-    setDragItem(item);
-    setMessage('');
-  };
-
-  const handleDrop = (index) => {
-    if (dragItem !== null && index === currentStep) {
-      const correctItem = correctSteps[currentStep];
-      if (dragItem === correctItem) {
-        const newAnswers   = [...answers];
-        newAnswers[index]  = dragItem;
-        setAnswers(newAnswers);
-        setCurrentStep(currentStep + 1);
-        setDragItem(null);
-
-        if (currentStep + 1 === correctSteps.length) {
-          setMessage('¡Felicidades, lo lograste!');
-        }
-      } else {
-        setMessage('Ese paso no ocurre en este momento del proceso.');
-      }
-    } else {
-      setMessage('Debes seguir el orden correcto.');
-    }
+  const handleReferenceImagesUpload = (e) => {
+    const files = Array.from(e.target.files);
+    setReferenceImages(files.map(file => URL.createObjectURL(file)));
   };
 
   const handleStepChange = (index, value) => {
-    const newSteps = [...steps];
-    newSteps[index] = value;
-    setSteps(newSteps);
+    const updatedSteps = [...steps];
+    updatedSteps[index] = value;
+    setSteps(updatedSteps);
   };
 
-  const addStep = () => setSteps([...steps, '']);
+  const addStep = () => {
+    if (!difficulty) return setMessage('Selecciona una dificultad antes de agregar pasos.');
+    if (steps.length >= limits[difficulty]) {
+      return setMessage(`Límite alcanzado: máximo ${limits[difficulty]} pasos.`);
+    }
+    setSteps([...steps, '']);
+    setMessage('');
+  };
+
+  const deleteStep = (index) => {
+    const updatedSteps = steps.filter((_, idx) => idx !== index);
+    setSteps(updatedSteps);
+  };
 
   const startPreview = () => {
-    const filtered          = steps.filter((s) => s.trim() !== '');
+    if (!ageGroup || !difficulty) {
+      return setMessage('Selecciona un rango de edad y una dificultad.');
+    }
+    const filtered = steps.filter((s) => s.trim() !== '');
+    if (filtered.length < 2) return setMessage('Agrega al menos 2 pasos.');
+    if (filtered.length > limits[difficulty]) {
+      return setMessage(`Has excedido el límite de pasos (${limits[difficulty]}).`);
+    }
+
     setCorrectSteps(filtered);
+    setShuffledSteps([...filtered].sort(() => Math.random() - 0.5));
     setAnswers(new Array(filtered.length).fill(null));
     setCurrentStep(0);
-    setMessage('');
-    const shuffled          = [...filtered].sort(() => Math.random() - 0.5);
-    setShuffledSteps(shuffled);
+    setDragItem(null);
+    setTotalErrors(0);
+    setGameOver(false);
     setIsPreview(true);
+    setMessage('');
   };
 
   const resetPreview = () => {
     setIsPreview(false);
     setAnswers([]);
+    setDragItem(null);
+    setTotalErrors(0);
+    setGameOver(false);
     setCurrentStep(0);
     setMessage('');
-    setDragItem(null);
   };
 
-  /* Nuevo: guardar y mostrar confirmación */
-  const handleSave = () => {
-    // Aquí iría tu lógica real de persistencia (llamada a API, etc.).
-    setMessage('✅ ¡Actividad guardada con éxito!');
-    /* Navegamos de vuelta al editor después de 1.5 s */
-    setTimeout(() => {
+  const handleDragStart = (item) => {
+    if (!gameOver) {
+      setDragItem(item);
       setMessage('');
-      resetPreview();
-    }, 1500);
+    }
   };
 
-  /* ---------- UI ---------- */
+  const handleDrop = (index) => {
+    if (gameOver) return;
+    if (dragItem && index === currentStep) {
+      if (dragItem === correctSteps[currentStep]) {
+        const newAnswers = [...answers];
+        newAnswers[index] = dragItem;
+        setAnswers(newAnswers);
+        setCurrentStep(currentStep + 1);
+        if (currentStep + 1 === correctSteps.length) {
+          setMessage('¡Felicidades, lo lograste!');
+        }
+      } else {
+        const newErrors = totalErrors + 1;
+        setTotalErrors(newErrors);
+        if (newErrors >= maxErrors[difficulty]) {
+          setGameOver(true);
+          setMessage('Has alcanzado el límite de errores. Fin del juego.');
+        } else {
+          setMessage(`Incorrecto. Te quedan ${maxErrors[difficulty] - newErrors} error(es).`);
+        }
+      }
+      setDragItem(null);
+    } else {
+      setMessage('Debes seguir el orden correcto.');
+    }
+  };
+
   return (
     <div className="actividad-container">
-      {/* --------- Editor --------- */}
       {!isPreview ? (
         <div className="editor">
-          <h2>Crear nueva actividad interactiva</h2>
+          <h2>Crear nueva actividad</h2>
 
-          <textarea
-            placeholder="Escribe la pregunta aquí"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
+          <label>Título:</label>
+          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
 
+          <label>Descripción:</label>
+          <div className="toolbar">
+            <button onClick={() => editor.chain().focus().toggleBold().run()}>B</button>
+            <button onClick={() => editor.chain().focus().toggleItalic().run()}>I</button>
+            <button onClick={() => editor.chain().focus().setTextAlign('left').run()}>←</button>
+            <button onClick={() => editor.chain().focus().setTextAlign('center').run()}>↔</button>
+            <button onClick={() => editor.chain().focus().setTextAlign('right').run()}>→</button>
+            <button onClick={() => {
+              const url = prompt('URL de la imagen:');
+              if (url) editor.chain().focus().setImage({ src: url }).run();
+            }}>🖼️</button>
+          </div>
+          <div className="editor-box">
+            <EditorContent editor={editor} />
+          </div>
+
+          <label>Imagen de fondo:</label>
           <input type="file" accept="image/*" onChange={handleImageUpload} />
 
-          <h4>Pasos esperados en orden correcto:</h4>
-          {steps.map((step, idx) => (
-            <input
-              key={idx}
-              placeholder={`Paso ${idx + 1}`}
-              value={step}
-              onChange={(e) => handleStepChange(idx, e.target.value)}
-            />
-          ))}
+          <label>Imágenes de referencia:</label>
+          <input type="file" multiple accept="image/*" onChange={handleReferenceImagesUpload} />
 
-          <button className="add-step" onClick={addStep}>
-            + Agregar paso
-          </button>
+          <label>Rango de edad:</label>
+          <select value={ageGroup} onChange={(e) => setAgeGroup(e.target.value)}>
+            <option value="">Selecciona...</option>
+            <option value="8-10">8-10</option>
+            <option value="10-12">10-12</option>
+            <option value="12-14">12-14</option>
+            <option value="14-16">14-16</option>
+            <option value="16-19">16-19</option>
+          </select>
+
+          <label>Dificultad:</label>
+          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+            <option value="">Selecciona...</option>
+            <option value="facil">Fácil</option>
+            <option value="intermedio">Intermedio</option>
+            <option value="dificil">Difícil</option>
+          </select>
+
+          <h4>Pasos esperados:</h4>
+          {steps.map((step, idx) => (
+            <div key={idx} className="step-row">
+              <input
+                placeholder={`Paso ${idx + 1}`}
+                value={step}
+                onChange={(e) => handleStepChange(idx, e.target.value)}
+              />
+              <button onClick={() => deleteStep(idx)}>🗑️</button>
+            </div>
+          ))}
+          <p>Pasos agregados: {steps.length} / {difficulty ? limits[difficulty] : '?'}</p>
+          <button className="add-step" onClick={addStep}>+ Agregar paso</button>
 
           <div className="editor-buttons">
             <button onClick={startPreview}>Vista previa del juego</button>
           </div>
+
+          {message && <div className="message">{message}</div>}
         </div>
       ) : (
-        /* --------- Vista previa --------- */
-        <div
-          className="preview"
-          style={{
-            backgroundImage: `url(${background})`,
-            backgroundSize: 'cover',
-          }}
-        >
+        <div className="preview" style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>
           <div className="overlay">
-            <h2>{question}</h2>
+            <h2>{title}</h2>
+            <div dangerouslySetInnerHTML={{ __html: editor.getHTML() }} />
+            <div className="reference-images">
+              {referenceImages.map((src, i) => <img key={i} src={src} alt={`ref-${i}`} />)}
+            </div>
 
             <div className="interactive-area">
-              {/* Zonas de destino */}
               <div className="drop-zones">
-                {answers.map((answer, idx) => (
+                {answers.map((ans, i) => (
                   <div
-                    key={idx}
-                    className={`drop-slot ${idx === currentStep ? 'active-slot' : ''}`}
+                    key={i}
+                    className={`drop-slot ${i === currentStep ? 'active-slot' : ''}`}
                     onDragOver={(e) => e.preventDefault()}
-                    onDrop={() => handleDrop(idx)}
+                    onDrop={() => handleDrop(i)}
                   >
-                    {answer ? (
-                      <span>{answer}</span>
-                    ) : (
-                      <span className="placeholder">Suelta aquí</span>
-                    )}
+                    {ans ? <span>{ans}</span> : <span className="placeholder">Suelta aquí</span>}
                   </div>
                 ))}
               </div>
-
-              {/* Ítems arrastrables */}
               <div className="draggable-items">
-                {shuffledSteps.map(
-                  (step, idx) =>
-                    !answers.includes(step) && (
-                      <div
-                        key={idx}
-                        className="draggable"
-                        draggable
-                        onDragStart={() => handleDragStart(step)}
-                      >
-                        {step}
-                      </div>
-                    )
-                )}
+                {shuffledSteps.map((step, idx) => (
+                  !answers.includes(step) && (
+                    <div key={idx} className="draggable" draggable onDragStart={() => handleDragStart(step)}>
+                      {step}
+                    </div>
+                  )
+                ))}
               </div>
             </div>
 
-            {message && <div className="message">{message}</div>}
-
             <div className="preview-buttons">
               <button onClick={resetPreview}>Volver al editor</button>
-              <button onClick={handleSave}>Guardar y salir</button>
+              <button onClick={() => setMessage('Actividad guardada con éxito.')}>Guardar</button>
             </div>
+            {message && <div className="message">{message}</div>}
           </div>
         </div>
       )}

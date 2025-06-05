@@ -1,210 +1,208 @@
-/* ----- Layout base ----- */
 .actividad-container {
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
-  font-family: system-ui, sans-serif;
-  width: 100%;
-}
-
-.editor,
-.preview {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* ----- Editor ----- */
-.editor {
-  width: 450px;
+  font-family: 'Segoe UI', sans-serif;
   padding: 20px;
+  max-width: 960px;
+  margin: auto;
 }
 
-.editor h2 {
-  margin-bottom: 1rem;
+.editor h2, .preview h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #333;
 }
 
-.editor textarea {
+label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+}
+
+input[type="text"], select, input[type="file"] {
   width: 100%;
-  height: 70px;
-  margin-bottom: 1rem;
-  padding: 0.6rem;
-  resize: none;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
-.editor input[type='file'] {
-  margin-bottom: 1rem;
+.editor-box {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  min-height: 100px;
+  background: #fff;
+  margin-bottom: 20px;
 }
 
-.editor input:not([type='file']) {
-  width: 100%;
-  margin-bottom: 0.6rem;
-  padding: 0.5rem;
+.toolbar button {
+  margin-right: 6px;
+  padding: 4px 8px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.toolbar button:hover {
+  background: #ccc;
+}
+
+.step-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.step-row input {
+  flex: 1;
+}
+
+.step-row button {
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
 }
 
 .add-step {
-  margin-top: 0.5rem;
-  background: #d9d9d9;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #1976d2;
+  color: white;
   border: none;
-  padding: 0.45rem 0.9rem;
-  cursor: pointer;
-  border-radius: 6px;
-}
-
-.editor-buttons button {
-  margin-top: 1rem;
-  background: #007bff;
-  color: #fff;
-  border: none;
-  padding: 0.6rem 1.4rem;
   border-radius: 6px;
   cursor: pointer;
 }
 
-/* ----- Vista previa ----- */
+.add-step:hover {
+  background: #1565c0;
+}
+
+.editor-buttons, .preview-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.editor-buttons button, .preview-buttons button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+.editor-buttons button:hover, .preview-buttons button:hover {
+  background-color: #388e3c;
+}
+
+.message {
+  margin-top: 15px;
+  padding: 10px;
+  background: #ffeb3b;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #333;
+}
+
 .preview {
-  width: 800px;
-  min-height: 500px;
-  overflow: hidden;
   position: relative;
-  color: #fff;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 600px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .overlay {
-  background: rgba(0, 0, 0, 0.65);
-  padding: 2rem;
-  height: 100%;
+  background-color: rgba(255, 255, 255, 0.92);
+  padding: 20px;
+  min-height: 100%;
 }
 
-.overlay h2 {
-  margin-bottom: 1.25rem;
+.reference-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.reference-images img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 .interactive-area {
-  display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-}
-
-/* Zonas donde soltar */
-.drop-zones {
-  flex: 1;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 20px;
+}
+
+.drop-zones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .drop-slot {
-  background: rgba(255, 255, 255, 0.25);
-  border: 2px dashed #ccc;
-  min-height: 55px;
-  padding: 1rem;
-  border-radius: 6px;
-  text-align: center;
-  transition: background 0.2s, border-color 0.2s;
+  width: 140px;
+  min-height: 50px;
+  border: 2px dashed #bbb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-weight: bold;
+  padding: 10px;
 }
 
-.drop-slot.active-slot {
-  border-color: #28a745;
-  background: rgba(255, 255, 255, 0.35);
+.active-slot {
+  border-color: #4caf50;
+  background-color: #e8f5e9;
 }
 
 .placeholder {
-  color: #eee;
+  color: #888;
   font-style: italic;
 }
 
-/* Ítems arrastrables */
 .draggable-items {
-  flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .draggable {
-  background: #17a2b8;
-  padding: 0.8rem;
+  background: #2196f3;
+  color: white;
+  padding: 8px 12px;
   border-radius: 6px;
   cursor: grab;
-  text-align: center;
   user-select: none;
-  transition: transform 0.15s;
+  transition: transform 0.1s ease-in-out;
 }
 
 .draggable:active {
-  transform: scale(0.96);
+  transform: scale(1.05);
+  cursor: grabbing;
 }
 
-/* Mensajes y botones */
-.message {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #ffc107;
-  color: #000;
-  border-radius: 6px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.preview-buttons {
-  margin-top: 2rem;
-}
-
-.preview-buttons button {
-  margin-right: 1rem;
-  background: #28a745;
-  color: #fff;
-  padding: 0.55rem 1.2rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* ----- RESPONSIVE ----- */
-@media (max-width: 1024px) {
-  .preview {
-    width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .actividad-container {
-    padding: 1rem;
-  }
-
-  .editor {
+@media (max-width: 600px) {
+  .drop-slot {
     width: 100%;
   }
 
-  .interactive-area {
+  .draggable-items, .drop-zones {
     flex-direction: column;
-  }
-
-  .draggable-items,
-  .drop-zones {
-    width: 100%;
-  }
-
-  .draggable {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .editor,
-  .preview {
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .overlay {
-    padding: 1.25rem;
-  }
-
-  .preview-buttons button {
-    width: 100%;
-    margin-bottom: 0.6rem;
-    
   }
 }
