@@ -5,7 +5,8 @@
   margin: auto;
 }
 
-.editor h2, .preview h2 {
+.editor h2,
+.preview h2 {
   font-size: 1.8rem;
   margin-bottom: 15px;
   color: #333;
@@ -17,7 +18,9 @@ label {
   display: block;
 }
 
-input[type="text"], select, input[type="file"] {
+input[type="text"],
+select,
+input[type="file"] {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
@@ -26,26 +29,35 @@ input[type="text"], select, input[type="file"] {
   border-radius: 6px;
 }
 
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.toolbar button,
+.toolbar input[type="file"] {
+  background: #e0e0e0;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toolbar button:hover,
+.toolbar input[type="file"]:hover {
+  background: #ccc;
+}
+
 .editor-box {
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 10px;
-  min-height: 100px;
+  min-height: 200px;
   background: #fff;
   margin-bottom: 20px;
-}
-
-.toolbar button {
-  margin-right: 6px;
-  padding: 4px 8px;
-  border: none;
-  background: #ddd;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.toolbar button:hover {
-  background: #ccc;
+  cursor: text;
 }
 
 .step-row {
@@ -82,13 +94,15 @@ input[type="text"], select, input[type="file"] {
   background: #1565c0;
 }
 
-.editor-buttons, .preview-buttons {
+.editor-buttons,
+.preview-buttons {
   margin-top: 20px;
   display: flex;
   gap: 10px;
 }
 
-.editor-buttons button, .preview-buttons button {
+.editor-buttons button,
+.preview-buttons button {
   padding: 10px 16px;
   border: none;
   border-radius: 6px;
@@ -97,7 +111,8 @@ input[type="text"], select, input[type="file"] {
   cursor: pointer;
 }
 
-.editor-buttons button:hover, .preview-buttons button:hover {
+.editor-buttons button:hover,
+.preview-buttons button:hover {
   background-color: #388e3c;
 }
 
@@ -114,47 +129,37 @@ input[type="text"], select, input[type="file"] {
   position: relative;
   background-position: center;
   background-repeat: no-repeat;
+  background-size: cover;
   min-height: 600px;
   border-radius: 8px;
   overflow: hidden;
 }
 
 .overlay {
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.95);
   padding: 20px;
   min-height: 100%;
 }
 
-.reference-images {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.reference-images img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
+/* Layout dividido en columnas */
 .interactive-area {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
   margin-top: 20px;
+}
+
+.drop-zones,
+.draggable-items {
+  flex: 1 1 45%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-
-.drop-zones {
-  display: flex;
-  flex-wrap: wrap;
   gap: 10px;
 }
 
 .drop-slot {
-  width: 140px;
+  width: 100%;
   min-height: 50px;
   border: 2px dashed #bbb;
   display: flex;
@@ -176,12 +181,6 @@ input[type="text"], select, input[type="file"] {
   font-style: italic;
 }
 
-.draggable-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
 .draggable {
   background: #2196f3;
   color: white;
@@ -197,12 +196,38 @@ input[type="text"], select, input[type="file"] {
   cursor: grabbing;
 }
 
-@media (max-width: 600px) {
-  .drop-slot {
-    width: 100%;
+/* Descripción con formato enriquecido */
+.tiptap p {
+  margin: 0 0 10px;
+}
+
+.reference-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.reference-images img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .interactive-area {
+    flex-direction: column;
   }
 
-  .draggable-items, .drop-zones {
-    flex-direction: column;
+  .drop-zones,
+  .draggable-items {
+    flex: 1 1 100%;
+  }
+
+  .drop-slot {
+    width: 100%;
   }
 }

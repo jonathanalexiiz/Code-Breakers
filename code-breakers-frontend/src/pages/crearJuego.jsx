@@ -1,8 +1,12 @@
+// JSX FILE: DocenteActividad.jsx
 import React, { useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import Image from '@tiptap/extension-image';
+import TextStyle from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
+import { FontSize } from '../extensions/FontSize';
 import '../styles/crearJuego.css';
 
 export default function DocenteActividad() {
@@ -10,7 +14,6 @@ export default function DocenteActividad() {
   const [ageGroup, setAgeGroup] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [steps, setSteps] = useState(['']);
-  const [referenceImages, setReferenceImages] = useState([]);
   const [background, setBackground] = useState(null);
   const [correctSteps, setCorrectSteps] = useState([]);
   const [shuffledSteps, setShuffledSteps] = useState([]);
@@ -28,10 +31,13 @@ export default function DocenteActividad() {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      TextStyle,
+      Color,
+      FontSize,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Image,
     ],
-    content: '<p>Escribe la descripción aquí...</p>',
+    content: '<p></p>',
   });
 
   const handleImageUpload = (e) => {
@@ -39,9 +45,15 @@ export default function DocenteActividad() {
     if (file) setBackground(URL.createObjectURL(file));
   };
 
-  const handleReferenceImagesUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setReferenceImages(files.map(file => URL.createObjectURL(file)));
+  const insertEditorImage = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        editor.chain().focus().setImage({ src: reader.result }).run();
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleStepChange = (index, value) => {
@@ -145,20 +157,25 @@ export default function DocenteActividad() {
             <button onClick={() => editor.chain().focus().setTextAlign('left').run()}>←</button>
             <button onClick={() => editor.chain().focus().setTextAlign('center').run()}>↔</button>
             <button onClick={() => editor.chain().focus().setTextAlign('right').run()}>→</button>
-            <button onClick={() => {
-              const url = prompt('URL de la imagen:');
-              if (url) editor.chain().focus().setImage({ src: url }).run();
-            }}>🖼️</button>
+            <input type="color" onChange={(e) => editor.chain().focus().setColor(e.target.value).run()} />
+            <select onChange={(e) => editor.chain().focus().setFontSize(e.target.value).run()}>
+              <option value="12px">12</option>
+              <option value="14px">14</option>
+              <option value="16px">16</option>
+              <option value="18px">18</option>
+              <option value="24px">24</option>
+            </select>
+            <label className="image-upload">
+              🖼️
+              <input type="file" accept="image/*" onChange={insertEditorImage} style={{ display: 'none' }} />
+            </label>
           </div>
-          <div className="editor-box">
+          <div className="editor-box" onClick={() => editor.commands.focus()}>
             <EditorContent editor={editor} />
           </div>
 
           <label>Imagen de fondo:</label>
           <input type="file" accept="image/*" onChange={handleImageUpload} />
-
-          <label>Imágenes de referencia:</label>
-          <input type="file" multiple accept="image/*" onChange={handleReferenceImagesUpload} />
 
           <label>Rango de edad:</label>
           <select value={ageGroup} onChange={(e) => setAgeGroup(e.target.value)}>
@@ -203,11 +220,16 @@ export default function DocenteActividad() {
           <div className="overlay">
             <h2>{title}</h2>
             <div dangerouslySetInnerHTML={{ __html: editor.getHTML() }} />
-            <div className="reference-images">
-              {referenceImages.map((src, i) => <img key={i} src={src} alt={`ref-${i}`} />)}
-            </div>
-
-            <div className="interactive-area">
+            <div className="interactive-columns">
+              <div className="draggable-items">
+                {shuffledSteps.map((step, idx) => (
+                  !answers.includes(step) && (
+                    <div key={idx} className="draggable" draggable onDragStart={() => handleDragStart(step)}>
+                      {step}
+                    </div>
+                  )
+                ))}
+              </div>
               <div className="drop-zones">
                 {answers.map((ans, i) => (
                   <div
@@ -220,17 +242,7 @@ export default function DocenteActividad() {
                   </div>
                 ))}
               </div>
-              <div className="draggable-items">
-                {shuffledSteps.map((step, idx) => (
-                  !answers.includes(step) && (
-                    <div key={idx} className="draggable" draggable onDragStart={() => handleDragStart(step)}>
-                      {step}
-                    </div>
-                  )
-                ))}
-              </div>
             </div>
-
             <div className="preview-buttons">
               <button onClick={resetPreview}>Volver al editor</button>
               <button onClick={() => setMessage('Actividad guardada con éxito.')}>Guardar</button>
