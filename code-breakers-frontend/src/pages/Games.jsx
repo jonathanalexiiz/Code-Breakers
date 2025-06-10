@@ -8,21 +8,17 @@ const Game = () => {
         <section className="juegos-links">
             <ol>
                 <li>
-                    <Link to="/portada-juego">
-                        Juego interactivo
+                    <Link to="/primer-juego">
+                        Primer juego
                     </Link>
                 </li>
                 {/* Puedes agregar más juegos aquí */}
                 <li>
                     <Link to="/otro-juego">
-                        Otro juego educativo
+                        Segundo juego
                     </Link>
                 </li>
-                <li>
-                    <Link to="/crear-juego">
-                        Crear Juego
-                    </Link>
-                </li>
+              
             </ol>
         </section>
     );

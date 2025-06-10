@@ -1,16 +1,17 @@
 import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import Main from './Main';
 import '../styles/layout.css';
+import { Outlet } from 'react-router-dom';
 
-
-const Layout = () => {
+const Layout = ({ tipoUsuario, onLogout }) => {
   return (
     <div className="layout-container">
-      <Header/>
-      <Main/>
-      <Footer/>
+      <Header tipoUsuario={tipoUsuario} onLogout={onLogout} />
+      <main className="main-content">
+        <Outlet />
+      </main>
+      <Footer />
     </div>
   );
 };
