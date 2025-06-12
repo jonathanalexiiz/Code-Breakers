@@ -76,7 +76,7 @@ const App = () => {
             {/* Rutas específicas ESTUDIANTE */}
             {userRole === "estudiante" && (
               <>
-                <Route path="games" element={<Game />} />
+                <Route path="games" element={<Game userRole={userRole}/>} />
                 <Route path="primer-juego" element={<PrimerJuego />} />
                 <Route path="otro-juego" element={<Contact />} />
               </>
