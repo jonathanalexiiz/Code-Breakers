@@ -1,233 +1,775 @@
-.actividad-container {
-  font-family: 'Segoe UI', sans-serif;
+
+/* Contenedor principal */
+.crear-juego {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
-  max-width: 960px;
-  margin: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
 }
 
-.editor h2,
-.preview h2 {
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-  color: #333;
+/* Editor de actividades */
+.editor-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 32px;
+  margin-bottom: 24px;
 }
 
-label {
-  font-weight: bold;
-  margin-top: 15px;
-  display: block;
+.editor-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 32px;
+  text-align: center;
+  border-bottom: 3px solid #3b82f6;
+  padding-bottom: 16px;
 }
 
-input[type="text"],
-select,
-input[type="file"] {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+/* Secciones del formulario */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.text-input {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s ease;
+  background-color: white;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Editor de descripción */
+.description-editor {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
 }
 
 .toolbar {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
 }
 
-.toolbar button,
-.toolbar input[type="file"] {
-  background: #e0e0e0;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.toolbar button:hover,
-.toolbar input[type="file"]:hover {
-  background: #ccc;
-}
-
-.editor-box {
-  border: 1px solid #ccc;
+.toolbar-button {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
-  padding: 10px;
-  min-height: 200px;
-  background: #fff;
-  margin-bottom: 20px;
-  cursor: text;
-}
-
-.step-row {
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  min-width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  justify-content: center;
 }
 
-.step-row input {
-  flex: 1;
+.toolbar-button:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
 }
 
-.step-row button {
-  background: #f44336;
+.toolbar-button.active {
+  background: #3b82f6;
   color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 4px 8px;
-  cursor: pointer;
+  border-color: #3b82f6;
 }
 
-.add-step {
-  margin-top: 10px;
+.toolbar-select {
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  height: 36px;
+}
+
+.color-input {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  background: none;
+  padding: 2px;
+}
+
+.image-button {
   padding: 8px 12px;
-  background: #1976d2;
-  color: white;
-  border: none;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
+  background: white;
   cursor: pointer;
-}
-
-.add-step:hover {
-  background: #1565c0;
-}
-
-.editor-buttons,
-.preview-buttons {
-  margin-top: 20px;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  height: 36px;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
 }
 
-.editor-buttons button,
-.preview-buttons button {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background-color: #4caf50;
-  color: white;
-  cursor: pointer;
+.image-button:hover {
+  background: #f3f4f6;
 }
 
-.editor-buttons button:hover,
-.preview-buttons button:hover {
-  background-color: #388e3c;
+.file-input {
+  display: none;
 }
 
-.message {
-  margin-top: 15px;
-  padding: 10px;
-  background: #ffeb3b;
-  border-radius: 6px;
-  font-weight: bold;
-  color: #333;
-}
-
-.preview {
+/* Contenedor del editor */
+.editor-container-area {
   position: relative;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  min-height: 600px;
-  border-radius: 8px;
   overflow: hidden;
 }
 
-.overlay {
-  background-color: rgba(255, 255, 255, 0.95);
-  padding: 20px;
-  min-height: 100%;
+.description-textarea {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  background: transparent;
+  outline: none;
+  box-sizing: border-box;
 }
 
-/* Layout dividido en columnas */
-.interactive-area {
+/* Contenedor de imágenes */
+.image-container {
+  position: absolute;
+  border: 2px dashed #3b82f6;
+  border-radius: 8px;
+  cursor: move;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.image-container:hover {
+  border-color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.draggable-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+.remove-button {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.drop-zones,
-.draggable-items {
-  flex: 1 1 45%;
+.remove-button:hover {
+  background: #dc2626;
+}
+
+.resize-handle {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  background: #3b82f6;
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: se-resize;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Selectores agrupados */
+.select-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.select-item {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
-.drop-slot {
-  width: 100%;
-  min-height: 50px;
-  border: 2px dashed #bbb;
+.select-input {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.select-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Sección de pasos */
+.steps-section {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  background: #fafbfc;
+}
+
+.steps-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.steps-title::before {
+  content: "📝";
+  font-size: 1.5rem;
+}
+
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.step-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.step-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.delete-step-button {
+  padding: 8px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  color: #dc2626;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-step-button:hover {
+  background: #fecaca;
+  border-color: #f87171;
+}
+
+.steps-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.steps-counter {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.add-step-button {
+  padding: 10px 20px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.add-step-button:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Botones de acción */
+.action-buttons {
   display: flex;
   justify-content: center;
-  align-items: center;
-  background: #f5f5f5;
-  border-radius: 8px;
-  font-weight: bold;
-  padding: 10px;
+  margin-top: 32px;
 }
 
-.active-slot {
-  border-color: #4caf50;
-  background-color: #e8f5e9;
-}
-
-.placeholder {
-  color: #888;
-  font-style: italic;
-}
-
-.draggable {
-  background: #2196f3;
+.preview-button {
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: grab;
-  user-select: none;
-  transition: transform 0.1s ease-in-out;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
 }
 
-.draggable:active {
-  transform: scale(1.05);
+.preview-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
+}
+
+/* Contenedor de vista previa */
+.preview-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.game-container {
+  padding: 32px;
+}
+
+.game-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  text-align: center;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Descripción en vista previa */
+.description-preview {
+  position: relative;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.preview-image {
+  position: absolute;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Caja de pregunta */
+.question-box {
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 2px solid #0ea5e9;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.question-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0c4a6e;
+  margin: 0;
+}
+
+/* Área del juego */
+.game-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* Opciones disponibles */
+.options-section {
+  background: #fef3c7;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #f59e0b;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-item {
+  padding: 16px;
+  background: white;
+  border: 2px solid #f59e0b;
+  border-radius: 8px;
+  cursor: grab;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.option-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  border-color: #d97706;
+}
+
+.option-item:active {
   cursor: grabbing;
 }
 
-/* Descripción con formato enriquecido */
-.tiptap p {
-  margin: 0 0 10px;
+.option-item.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.reference-images {
+.option-item.draggable:hover {
+  background: #fffbeb;
+}
+
+/* Secuencia de pasos */
+.sequence-section {
+  background: #dbeafe;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #3b82f6;
+}
+
+.sequence-list {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sequence-item {
+  padding: 16px;
+  border: 2px dashed #9ca3af;
+  border-radius: 8px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.sequence-item.empty {
+  background: #f9fafb;
+}
+
+.sequence-item.empty:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.sequence-item.correct {
+  background: #dcfce7;
+  border-color: #22c55e;
+  border-style: solid;
+}
+
+.sequence-item.incorrect {
+  background: #fee2e2;
+  border-color: #ef4444;
+  border-style: solid;
+}
+
+.sequence-text {
+  font-weight: 500;
+  text-align: center;
+}
+
+.placeholder-text {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Controles del juego */
+.game-controls {
+  border-top: 2px solid #e5e7eb;
+  padding-top: 24px;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 10px 0;
 }
 
-.reference-images img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.back-button {
+  padding: 12px 24px;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-/* Responsive */
+.back-button:hover {
+  background: #4b5563;
+  transform: translateY(-1px);
+}
+
+.save-button {
+  padding: 12px 24px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.save-button:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.retry-button {
+  padding: 12px 24px;
+  background: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+.save-activity-button {
+  padding: 12px 24px;
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.save-activity-button:hover {
+  background: #7c3aed;
+  transform: translateY(-1px);
+}
+
+/* Sección de retroalimentación */
+.feedback-section {
+  background: #f0f9ff;
+  border: 2px solid #0ea5e9;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.feedback-title {
+  color: #0c4a6e;
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.feedback-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  white-space: pre-wrap;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
+  overflow-x: auto;
+}
+
+/* Mensajes */
+.message {
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.info-message {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.success-message {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.warning-message {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-  .interactive-area {
+  .crear-juego {
+    padding: 16px;
+  }
+  
+  .editor-container,
+  .game-container {
+    padding: 20px;
+  }
+  
+  .editor-title {
+    font-size: 1.5rem;
+  }
+  
+  .game-title {
+    font-size: 2rem;
+  }
+  
+  .select-group {
+    grid-template-columns: 1fr;
+  }
+  
+  .game-area {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .toolbar {
+    gap: 4px;
+  }
+  
+  .toolbar-button,
+  .toolbar-select,
+  .color-input,
+  .image-button {
+    height: 32px;
+    font-size: 12px;
+  }
+  
+  .control-buttons {
     flex-direction: column;
+    align-items: center;
   }
-
-  .drop-zones,
-  .draggable-items {
-    flex: 1 1 100%;
+  
+  .steps-controls {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
   }
+}
 
-  .drop-slot {
-    width: 100%;
+@media (max-width: 480px) {
+  .toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .step-item {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  
+  .delete-step-button {
+    align-self: flex-end;
   }
 }
