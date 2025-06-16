@@ -9,6 +9,8 @@ import PortadaJuego from "./pages/PortadaJuego";
 import PrimerJuego from "./pages/PrimerJuego";
 import OtroJuegoPortada from "./pages/OtroJuegoPortada";
 import CrearJuego from "./pages/crearJuego";
+import VistaPrevia from "./pages/VistaPrevia";
+
 
 import Layout from "./components/Layout";
 import Login from "./components/Login";
@@ -39,6 +41,7 @@ const App = () => {
               <Route path="otro-juego" element={<OtroJuegoPortada />} />
               <Route path="primer-juego" element={<PrimerJuego />} />
               <Route path="crear-juego" element={<CrearJuego />} />
+              <Route path="vista-previa" element={<VistaPrevia />} />
               <Route path="/test-api" element={<TestAPI />} />
 
             </Route>

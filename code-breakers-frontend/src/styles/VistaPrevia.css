@@ -1,0 +1,496 @@
+/* Contenedor principal */
+.preview-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #ffffff;
+  min-height: 100vh;
+}
+
+.game-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 32px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Encabezado del juego */
+.game-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.game-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  text-align: center;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Indicador de progreso */
+.progress-indicator {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.progress-text {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Descripción en vista previa */
+.description-preview {
+  position: relative;
+  overflow: visible;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.preview-image {
+  position: absolute;
+  z-index: 10;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.preview-img {
+  object-fit: cover;
+  display: block;
+}
+
+/* Caja de pregunta */
+.question-box {
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 2px solid #0ea5e9;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.question-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0c4a6e;
+  margin: 0;
+}
+
+/* Área del juego */
+.game-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Opciones disponibles */
+.options-section {
+  background: #fef3c7;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #f59e0b;
+}
+
+.options-count {
+  font-size: 1rem;
+  color: #92400e;
+  font-weight: 500;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 60px;
+}
+
+.option-item {
+  padding: 16px;
+  background: white;
+  border: 2px solid #f59e0b;
+  border-radius: 8px;
+  cursor: grab;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.option-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  border-color: #d97706;
+}
+
+.option-item:active {
+  cursor: grabbing;
+}
+
+.option-item.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.option-item.draggable:hover {
+  background: #fffbeb;
+}
+
+.option-text {
+  display: block;
+  width: 100%;
+}
+
+.no-options {
+  padding: 20px;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  background: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+}
+
+/* Secuencia de pasos */
+.sequence-section {
+  background: #dbeafe;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #3b82f6;
+}
+
+.complete-indicator {
+  color: #059669;
+  font-size: 1rem;
+  font-weight: 700;
+  background: #dcfce7;
+  padding: 4px 12px;
+  border-radius: 16px;
+  border: 1px solid #10b981;
+}
+
+.sequence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sequence-item {
+  padding: 16px;
+  border: 2px dashed #9ca3af;
+  border-radius: 8px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  background: white;
+  position: relative;
+  cursor: pointer;
+}
+
+.sequence-item.empty {
+  background: #f9fafb;
+}
+
+.sequence-item.empty:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.sequence-item.filled {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  border-style: solid;
+}
+
+.sequence-item.correct {
+  background: #dcfce7;
+  border-color: #22c55e;
+  border-style: solid;
+}
+
+.sequence-item.incorrect {
+  background: #fee2e2;
+  border-color: #ef4444;
+  border-style: solid;
+}
+
+.sequence-number {
+  background: #3b82f6;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.sequence-text {
+  font-weight: 500;
+  flex: 1;
+}
+
+.placeholder-text {
+  color: #9ca3af;
+  font-style: italic;
+  flex: 1;
+}
+
+.result-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* Controles del juego */
+.game-controls {
+  border-top: 2px solid #e5e7eb;
+  padding-top: 24px;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.back-button, .save-button, .retry-button, .save-activity-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-button {
+  background: #6b7280;
+  color: white;
+}
+
+.back-button:hover {
+  background: #4b5563;
+  transform: translateY(-1px);
+}
+
+.save-button {
+  background: #10b981;
+  color: white;
+}
+
+.save-button:hover:not(.disabled) {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.save-button.disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.retry-button {
+  background: #f59e0b;
+  color: white;
+}
+
+.retry-button:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+.save-activity-button {
+  background: #8b5cf6;
+  color: white;
+}
+
+.save-activity-button:hover {
+  background: #7c3aed;
+  transform: translateY(-1px);
+}
+
+/* Sección de retroalimentación */
+.feedback-section {
+  background: #f0f9ff;
+  border: 2px solid #0ea5e9;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.feedback-title {
+  color: #0c4a6e;
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.feedback-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.feedback-line {
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.feedback-line:last-child {
+  border-bottom: none;
+}
+
+.correct-feedback {
+  color: #059669;
+  background: #ecfdf5;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 4px 0;
+}
+
+.incorrect-feedback {
+  color: #dc2626;
+  background: #fef2f2;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 4px 0;
+}
+
+/* Mensajes */
+.message {
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-weight: 500;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.message-icon {
+  font-size: 1.2rem;
+}
+
+.info-message {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.success-message {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.warning-message {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.error-message {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .preview-container {
+    padding: 16px;
+  }
+
+  .game-container {
+    padding: 20px;
+  }
+
+  .game-title {
+    font-size: 2rem;
+  }
+
+  .game-area {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .control-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+
+  .question-text {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 1.75rem;
+  }
+
+  .sequence-item, .option-item {
+    padding: 12px;
+  }
+
+  .control-buttons button {
+    width: 100%;
+    max-width: 280px;
+  }
+}
