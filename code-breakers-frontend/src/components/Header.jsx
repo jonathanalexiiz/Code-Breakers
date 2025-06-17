@@ -1,17 +1,14 @@
 import React from 'react';
 import "../styles/header.css";
 import Navbar from './Navbar';
-import "../styles/header.css";
 
-const Header = () => {
-    return (
-        <header className='header-container'>
-            
-            <div className='titulo-header'> Juegos Interactivos </div>
-            <Navbar/>
-
-        </header>
-    );
+const Header = ({ tipoUsuario, onLogout }) => {
+  return (
+    <header className="header-container">
+      <div className="titulo-header">Juegos Interactivos</div>
+      <Navbar tipoUsuario={tipoUsuario} onLogout={onLogout} />
+    </header>
+  );
 };
 
-export default Header
+export default Header;

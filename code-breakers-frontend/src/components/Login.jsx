@@ -12,11 +12,11 @@ const Login = ({ onLogin }) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
 
-    if (value.trim() === '') {
-      setError((prev) => ({ ...prev, [name]: `El campo ${name} es obligatorio` }));
-    } else {
-      setError((prev) => ({ ...prev, [name]: '', general: '' }));
-    }
+    setError((prev) => ({
+      ...prev,
+      [name]: value.trim() === '' ? `El campo ${name} es obligatorio` : '',
+      general: '',
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -27,33 +27,29 @@ const Login = ({ onLogin }) => {
       password: form.password ? '' : 'La contraseña es obligatoria',
     };
     setError((prev) => ({ ...prev, ...newErrors }));
-
     if (newErrors.email || newErrors.password) return;
 
     try {
-      // Petición real al backend Laravel
       const res = await api.post('/login', {
         email: form.email,
         password: form.password,
       });
 
-      const token = res.data.token;
+      const { token, user } = res.data;
 
-      // Guardar el token en localStorage
+      // Guardamos token en localStorage
       localStorage.setItem('token', token);
 
-      // Llamamos al callback que indica que el usuario está autenticado
-      onLogin();
+      // Guardamos el usuario y su rol en App.jsx
+      onLogin(user);
 
-      // Redirigimos a la página protegida
+      // Redirigimos al home, el layout será gestionado en App.jsx según el rol
       navigate('/home');
 
     } catch (err) {
-      console.error(err);
-      setError((prev) => ({
-        ...prev,
-        general: 'Credenciales incorrectas o error del servidor',
-      }));
+      console.error("Error:", err);
+      const mensaje = err.response?.data?.message || 'Error de conexión con el servidor';
+      setError((prev) => ({ ...prev, general: mensaje }));
     }
   };
 
@@ -67,9 +63,9 @@ const Login = ({ onLogin }) => {
           <input
             type="email"
             name="email"
-            placeholder="ejemplo@correo.com"
             value={form.email}
             onChange={handleChange}
+            placeholder="ejemplo@correo.com"
             className={error.email ? 'input-error' : ''}
           />
           {error.email && <span className="error">{error.email}</span>}
@@ -80,9 +76,9 @@ const Login = ({ onLogin }) => {
           <input
             type="password"
             name="password"
-            placeholder="••••••••"
             value={form.password}
             onChange={handleChange}
+            placeholder="••••••••"
             className={error.password ? 'input-error' : ''}
           />
           {error.password && <span className="error">{error.password}</span>}

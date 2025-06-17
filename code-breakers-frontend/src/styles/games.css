@@ -1,4 +1,69 @@
-.juegos-links {
+/*.juegos-links {
     /* border: 5px solid black; */
-    padding: 1rem 2rem;
+/*    padding: 1rem 2rem;
+}
+*/
+
+/*Nuevos estilos para el contenedor principal*/
+.games-conteiner{
+    padding: 2rem;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/*Estilos para el grid de botones*/
+.games-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 0 1rem;
+}
+
+/*Estilos para cada boton de juego*/
+.game-button{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+/* Efecto hover para interactividad */
+.game-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilos para las imágenes */
+.game-button img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 2px solid #f0f0f0;
+}
+
+/* Estilos para el texto */
+.game-button span {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Responsive para móviles */
+@media (max-width: 600px) {
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .game-button {
+        padding: 1rem;
+    }
 }

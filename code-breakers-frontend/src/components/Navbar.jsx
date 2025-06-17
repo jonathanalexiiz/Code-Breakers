@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/navbar.css";
 
-const Navbar = () => {
+const Navbar = ({ tipoUsuario, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -21,14 +21,33 @@ const Navbar = () => {
         aria-expanded={isOpen}
         onClick={toggleMenu}
       >
-        &#9776;
+        ☰
       </button>
 
       <div className={`nav-links ${isOpen ? "open" : ""}`}>
         <Link to="/home" onClick={closeMenu}>Inicio</Link>
-        <Link to="/about" onClick={closeMenu}>Sobre Nosotros</Link>
-        <Link to="/contact" onClick={closeMenu}>Contacto</Link>
-        <Link to="/games" onClick={closeMenu}>Juegos</Link>
+        <Link to="/about" onClick={closeMenu}>Acerca de</Link>
+
+        {tipoUsuario === "docente" && (
+          <Link to="/crear-juego" onClick={closeMenu}>Crear Juego</Link>
+        )}
+
+        {tipoUsuario === "estudiante" && (
+          <Link to="/games" onClick={closeMenu}>Juegos</Link>
+        )}
+
+        {onLogout && (
+          <button
+            className="btn-salir"
+            onClick={() => {
+              onLogout();
+              closeMenu();
+            }}
+          >
+            <img src="/logout.webp" alt="Salir" className="icono-salir" />
+            <span className="texto-salir">Salir</span>
+          </button>
+        )}
       </div>
     </nav>
   );

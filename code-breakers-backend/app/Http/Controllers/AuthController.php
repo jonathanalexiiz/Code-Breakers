@@ -22,7 +22,7 @@ class AuthController extends Controller
         $user = MongoUser::create([
             'name'     => $request->name,
             'email'    => $request->email,
-            'role'     => $request->role ?? 'estudiante', // Valor por defecto si no se envía
+            'role'     => $request->role ?? 'estudiante',
             'password' => Hash::make($request->password),
         ]);
 
@@ -34,7 +34,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // Login de usuario
+    // 🔐 Login de usuario (CORREGIDO)
     public function login(Request $request)
     {
         $request->validate([
@@ -48,9 +48,16 @@ class AuthController extends Controller
             return response()->json(['error' => '❌ Credenciales incorrectas'], 401);
         }
 
+        $user = JWTAuth::user(); // Obtenemos al usuario autenticado
+
         return response()->json([
             'message' => '🔓 Login exitoso',
             'token'   => $token,
+            'user'    => [
+                'name'  => $user->name,
+                'email' => $user->email,
+                'role'  => $user->role, // Necesario para el frontend
+            ]
         ]);
     }
 

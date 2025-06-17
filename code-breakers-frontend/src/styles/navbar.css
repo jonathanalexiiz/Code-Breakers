@@ -22,10 +22,6 @@
   transition: background-color 0.3s ease;
 }
 
-.hamburger:hover {
-    /* background-color: #0056b3; */
-}
-
 .nav-links {
   display: none; /* Menú oculto por defecto en móvil */
   position: absolute;
@@ -37,7 +33,7 @@
   flex-direction: column;
   padding: 1rem 0;
   gap: 0;
-  backdrop-filter: blur(6px); (Opcional) para dar un efecto de vidrio si hay contenido detrás
+  backdrop-filter: blur(6px);
 }
 
 
@@ -46,6 +42,34 @@
   left: -170%;
   align-items: center;
 
+}
+
+.btn-salir {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: black;
+  transition: transform 0.2s ease;
+}
+
+.btn-salir:hover {
+  transform: scale(1.05);
+  color: #333;
+}
+
+.icono-salir {
+  width: 24px;
+  height: 24px;
+}
+
+.texto-salir {
+  font-size: 1rem;
 }
 
 .nav-links a {
@@ -61,39 +85,29 @@
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6); /* Sombra suave */
 }
 
-/* A partir de tablet (768px) en adelante */
-@media (min-width: 768px) {
-  .hamburger {
+/* Laptop */
+@media (min-width: 1024px) {
+   .hamburger {
     display: none; /* Ocultar hamburguesa en pantallas grandes */
   }
-
   .nav-links {
+    background: none;
     display: flex !important; /* Mostrar menú siempre */
     position: static;
     flex-direction: row;
     padding: 0;
     gap: 2rem;
-  }
-  
-}
-
-/* Laptop */
-@media (min-width: 1024px) {
-  .nav-links {
-    gap: 3rem;
     
   }
 
-}
-
-/* Escritorio */
-@media (min-width: 1280px) {
-  .nav-links {
-    gap: 3rem;
-    background: none;
-  }
-  
-   .nav-links a {
+  .nav-links a {
     color: white;
   }
+
+ .btn-salir {
+    position: relative;
+    left: 19rem; /* ✅ Empuja el botón hacia la derecha */
+    color: white;
+  }
+
 }
