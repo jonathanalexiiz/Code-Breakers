@@ -33,12 +33,6 @@
   background-clip: text;
 }
 
-/* Indicador de progreso */
-.progress-indicator {
-  max-width: 400px;
-  margin: 0 auto;
-}
-
 .progress-text {
   display: block;
   font-size: 1rem;

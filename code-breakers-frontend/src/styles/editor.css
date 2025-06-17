@@ -8,29 +8,12 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Título principal */
-.editor-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 32px;
-  text-align: center;
-  border-bottom: 3px solid #3b82f6;
-  padding-bottom: 16px;
-}
-
-/* Secciones del formulario */
-.form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
 /* Grupos de inputs */
 .input-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 24px;
 }
 
 /* Etiquetas */
@@ -64,313 +47,7 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Editor de descripción (TipTap) */
-.description-editor {
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-  background: white;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Toolbar del editor */
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  flex-wrap: wrap;
-  margin-bottom: 12px; 
-}
-
-/* Etiquetas dentro de la toolbar */
-.toolbar-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #6b7280;
-  margin-left: 8px;
-  margin-right: 4px;
-  white-space: nowrap;
-}
-
-.toolbar-button,
-.image-button {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
-  min-width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-}
-
-.toolbar-button:hover,
-.image-button:hover {
-  background: #f3f4f6;
-  border-color: #9ca3af;
-}
-
-.toolbar-button.active {
-  background: #3b82f6;
-  color: white;
-  border-color: #3b82f6;
-}
-
-.toolbar-select {
-  padding: 6px 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  font-size: 12px;
-  height: 36px;
-  cursor: pointer;
-  min-width: 80px;
-}
-
-.color-input {
-  width: 36px;
-  height: 36px;
-  padding: 2px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  cursor: pointer;
-}
-
-.file-input {
-  display: none;
-}
-
-/* Separador de toolbar */
-.toolbar-separator {
-  width: 1px;
-  height: 24px;
-  background-color: #e5e7eb;
-  margin: 0 4px;
-}
-
-/* Área editable del editor */
-.editor-container-area {
-  padding: 16px;
-  min-height: 200px;
-  background: white;
-  line-height: 1.6;
-  font-size: 16px;
-  color: #374151;
-  outline: none;
-  font-family: inherit;
-}
-
-/* Estilos para el contenido ProseMirror */
-.ProseMirror {
-  outline: none;
-  min-height: 150px;
-  padding: 0;
-  margin: 0;
-  line-height: 1.6;
-  word-wrap: break-word;
-}
-
-.ProseMirror p {
-  margin: 0.5em 0;
-}
-
-.ProseMirror p:first-child {
-  margin-top: 0;
-}
-
-.ProseMirror p:last-child {
-  margin-bottom: 0;
-}
-
-.editor-container-area h1,
-.editor-container-area h2,
-.editor-container-area h3,
-.ProseMirror h1,
-.ProseMirror h2,
-.ProseMirror h3 {
-  font-weight: bold;
-  margin: 1em 0 0.5em;
-}
-
-.editor-container-area ul,
-.editor-container-area ol,
-.ProseMirror ul,
-.ProseMirror ol {
-  margin: 0.5em 0;
-  padding-left: 1.5em;
-}
-
-.editor-container-area blockquote,
-.ProseMirror blockquote {
-  border-left: 4px solid #3b82f6;
-  padding-left: 1em;
-  color: #6b7280;
-  font-style: italic;
-  background: #f9fafb;
-  margin: 1em 0;
-}
-
-.editor-container-area img,
-.ProseMirror img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin: 1em 0;
-}
-
-/* Contenedor de imágenes interactivo */
-.image-container {
-  position: absolute;
-  border: 2px dashed #3b82f6;
-  border-radius: 8px;
-  cursor: move;
-  background: rgba(255, 255, 255, 0.9);
-  box-sizing: border-box;
-  user-select: none;
-  touch-action: none;
-}
-
-.image-container:hover {
-  border-color: #1d4ed8;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-}
-
-.draggable-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 6px;
-  display: block;
-  pointer-events: none; /* Evita interferencias con drag */
-}
-
-/* Botón para eliminar imagen */
-.remove-button {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #ef4444;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: background 0.2s ease;
-  user-select: none;
-}
-
-.remove-button:hover {
-  background: #dc2626;
-}
-
-/* Mango para redimensionar imagen */
-.resize-handle {
-  position: absolute;
-  bottom: -4px;
-  right: -4px;
-  width: 12px;
-  height: 12px;
-  background: #3b82f6;
-  border: 2px solid white;
-  border-radius: 50%;
-  cursor: se-resize;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  user-select: none;
-}
-
-/* Controles de imagen */
-.image-controls {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background-color: #f9fafb;
-}
-
-.image-controls-title {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.image-controls-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.image-control-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.image-control-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #6b7280;
-}
-
-.image-control-input {
-  width: 70px;
-  padding: 4px 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 12px;
-}
-
-.image-control-unit {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.image-reset-button {
-  padding: 6px 12px;
-  font-size: 12px;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
-}
-
-.image-reset-button:hover {
-  background-color: #2563eb;
-}
-
-.image-controls-tip {
-  margin-top: 10px;
-  font-size: 11px;
-  color: #6b7280;
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-}
-
 /* Contenedor para los pasos */
-.steps-container,
 .steps-section {
   border: 2px solid #e5e7eb;
   border-radius: 12px;
@@ -508,6 +185,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
+  margin-bottom: 24px;
 }
 
 .select-item {
@@ -528,9 +206,17 @@
   font-weight: 500;
 }
 
+/* Contenedor de botones alineados */
+.buttons-container {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  align-items: stretch;
+}
+
 /* Botón de vista previa */
 .preview-button {
-  width: 100%;
+  flex: 1;
   padding: 12px 24px;
   background-color: #10b981;
   color: white;
@@ -539,39 +225,60 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 24px;
   transition: all 0.2s ease;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .preview-button:hover {
   background-color: #059669;
 }
 
+/* Botón de guardar actividad */
+.save-activity-button {
+  flex: 1;
+  padding: 12px 24px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-activity-button:hover {
+  background-color: #2563eb;
+}
+
+/* Editor de descripción */
+.description-editor {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.description-editor:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
-  .editor-container,
-  .select-group {
+  .editor-container {
     padding: 20px;
   }
 
   .select-group {
     grid-template-columns: 1fr;
-  }
-
-  .toolbar {
-    gap: 4px;
-  }
-
-  .toolbar-button,
-  .toolbar-select,
-  .color-input,
-  .image-button {
-    height: 32px;
-    font-size: 12px;
-  }
-
-  .toolbar-label {
-    font-size: 10px;
   }
 
   .steps-controls {
@@ -584,27 +291,13 @@
     flex-wrap: wrap;
   }
 
-  .image-controls-wrapper {
+  .buttons-container {
     flex-direction: column;
     gap: 12px;
-    align-items: stretch;
-  }
-
-  .image-control-group {
-    justify-content: space-between;
   }
 }
 
 @media (max-width: 480px) {
-  .toolbar {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .toolbar-label {
-    display: none; /* Ocultar etiquetas en móviles muy pequeños */
-  }
-
   .step-item {
     flex-direction: column;
     gap: 8px;

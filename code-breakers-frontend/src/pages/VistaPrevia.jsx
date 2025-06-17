@@ -1,18 +1,13 @@
 import React from 'react';
 import '../styles/VistaPrevia.css';
+import 'react-quill/dist/quill.snow.css'; // Ya lo haces en Editor, hazlo también en VistaPrevia si es separado.
+
 
 export default function VistaPrevia({
   title,
   description,
   question,
-  textColor,
-  fontSize,
-  fontWeight,
-  fontStyle,
-  textDecoration,
-  textAlign,
   containerHeight,
-  images = [],
   shuffledSteps = [],
   userAnswers = [],
   correctSteps = [],
@@ -86,46 +81,17 @@ export default function VistaPrevia({
             }}
           >
             <div
-              className="description-text-content"
+              className="ql-editor description-text-content"
               style={{
-                color: textColor,
-                fontSize: fontSize,
-                fontWeight: fontWeight,
-                fontStyle: fontStyle,
-                textDecoration: textDecoration,
-                textAlign: textAlign,
                 position: 'relative',
-                zIndex: 1
+                zIndex: 1,
+                padding: '0.5rem',
+                lineHeight: 1.6
               }}
-              dangerouslySetInnerHTML={{ __html: processDescriptionHTML(description) }}
+              dangerouslySetInnerHTML={{ __html: description }}
             />
 
-            {images.length > 0 && images.map((img, index) => {
-              if (!img?.src) return null;
 
-              const imageStyle = {
-                position: 'absolute',
-                left: `${img.x || 0}px`,
-                top: `${img.y || 0}px`,
-                width: `${img.width || 100}px`,
-                height: `${img.height || 100}px`,
-                zIndex: 10,
-                pointerEvents: 'none',
-                objectFit: 'cover',
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              };
-
-              return (
-                <img
-                  key={img.id || index}
-                  src={img.src}
-                  alt={`Imagen ${index + 1}`}
-                  style={imageStyle}
-                  className="preview-image"
-                />
-              );
-            })}
           </div>
         )}
 
@@ -212,13 +178,7 @@ export default function VistaPrevia({
             ) : (
               <button onClick={resetGame} className="retry-button">🔄 Intentar de nuevo</button>
             )}
-
-            <button
-              onClick={() => setMessage && setMessage('Actividad guardada con éxito.')}
-              className="save-activity-button"
-            >
-              💾 Guardar actividad
-            </button>
+            
           </div>
         </div>
 

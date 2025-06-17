@@ -1,30 +1,19 @@
-
-import React, { useRef, useState, useEffect } from 'react'
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import TextAlign from '@tiptap/extension-text-align'
-import TextStyle from '@tiptap/extension-text-style'
-import { FontSize, TextColor } from '../components/extensions/TextStyleExtensions'
-import { ResizableDraggableImageExtension } from '../components/extensions/ResizableDraggableImageExtension'
+import React, { useRef, useEffect } from 'react'
+import ReactQuill, { Quill } from 'react-quill'
+import ImageResize from 'quill-image-resize-module-react'
+import 'react-quill/dist/quill.snow.css'
 import '../styles/editor.css'
+
+if (typeof window !== 'undefined' && !window.Quill) {
+  window.Quill = Quill;
+}
+Quill.register('modules/imageResize', ImageResize)
 
 export default function Editor({
   title,
   setTitle,
   description,
   setDescription,
-  textColor,
-  setTextColor,
-  fontSize,
-  setFontSize,
-  fontWeight,
-  setFontWeight,
-  fontStyle,
-  setFontStyle,
-  textDecoration,
-  setTextDecoration,
-  textAlign,
-  setTextAlign,
   containerHeight,
   question,
   setQuestion,
@@ -44,227 +33,111 @@ export default function Editor({
   images,
   setImages,
 }) {
-  const fileInputRef = useRef(null)
-  const [lastImageAttrs, setLastImageAttrs] = useState(null)
-  const [isUpdatingImages, setIsUpdatingImages] = useState(false)
+  const quillRef = useRef(null)
 
-  const tiptapEditor = useEditor({
-    extensions: [
-      StarterKit,
-      TextStyle,
-      FontSize,
-      TextColor,
-      ResizableDraggableImageExtension,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
-    ],
-    content: description,
-    onUpdate({ editor }) {
-      const newDescription = editor.getHTML()
-      setDescription(newDescription)
-
-      // Extraer imágenes del HTML y sincronizar con el estado
-      if (!isUpdatingImages) {
-        extractImagesFromHTML(newDescription)
-      }
-    },
-  })
-
-  // Función SIMPLIFICADA para extraer imágenes del HTML
-  const extractImagesFromHTML = (htmlContent) => {
-    try {
-      const parser = new DOMParser()
-      const doc = parser.parseFromString(htmlContent, 'text/html')
-      const imageElements = doc.querySelectorAll('img[data-type="resizableDraggableImage"]')
-
-      console.log('🔍 Extrayendo imágenes del HTML:', imageElements.length)
-
-      const extractedImages = Array.from(imageElements).map((img, index) => {
-        const imageId = img.getAttribute('data-id') || `tiptap-img-${Date.now()}-${index}`
-
-        // Simplificar la obtención de dimensiones
-        const width = parseInt(img.getAttribute('data-width')) || 300
-        const height = parseInt(img.getAttribute('data-height')) || 200
-        const x = parseInt(img.getAttribute('data-x')) || 0
-        const y = parseInt(img.getAttribute('data-y')) || 0
-
-        return {
-          id: imageId,
-          src: img.src,
-          width: width,
-          height: height,
-          x: x,
-          y: y,
-        }
-      })
-
-      // Solo actualizar si hay cambios significativos
-      setImages(prevImages => {
-        const hasSignificantChanges = extractedImages.length !== prevImages.length ||
-          extractedImages.some((newImg) => {
-            const existingImg = prevImages.find(img => img.id === newImg.id)
-            return !existingImg ||
-              existingImg.src !== newImg.src ||
-              Math.abs(existingImg.width - newImg.width) > 5 ||
-              Math.abs(existingImg.height - newImg.height) > 5
-          })
-
-        if (hasSignificantChanges) {
-          console.log('🔄 Actualizando estado de imágenes:', extractedImages)
-          return extractedImages
-        }
-
-        return prevImages
-      })
-    } catch (error) {
-      console.error('❌ Error al extraer imágenes:', error)
-    }
+  const handleQuillChange = (value) => {
+    setDescription(value)
+    extractImagesFromHTML(value)
   }
 
-  // Función SIMPLIFICADA para redimensionar imagen
-  const resizeLastImage = (newWidth, newHeight) => {
-    if (!tiptapEditor || !lastImageAttrs) return
+  const extractImagesFromHTML = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const imageElements = doc.querySelectorAll('img');
 
-    const numericWidth = parseInt(newWidth) || 300
-    const numericHeight = parseInt(newHeight) || 200
+    const extractedImages = Array.from(imageElements).map((img, index) => {
+      const style = img.getAttribute('style') || '';
+      const widthMatch = style.match(/width:\s*(\d+\.?\d*)px/);
+      const heightMatch = style.match(/height:\s*(\d+\.?\d*)px/);
 
-    console.log('🔄 Redimensionando imagen:', { id: lastImageAttrs.id, width: numericWidth, height: numericHeight })
-
-    // Buscar y actualizar el nodo en el editor
-    tiptapEditor.commands.command(({ tr, state }) => {
-      let nodePos = -1
-
-      state.doc.descendants((node, pos) => {
-        if (node.type.name === 'resizableDraggableImage' &&
-          node.attrs['data-id'] === lastImageAttrs.id) {
-          nodePos = pos
-          return false // Detener búsqueda
-        }
-      })
-
-      if (nodePos === -1) return false
-
-      tr.setNodeMarkup(nodePos, undefined, {
-        ...state.doc.nodeAt(nodePos).attrs,
-        width: numericWidth,
-        height: numericHeight,
-      })
-
-      return true
-    })
-
-    const updatedAttrs = {
-      ...lastImageAttrs,
-      width: numericWidth,
-      height: numericHeight
-    }
-
-    setLastImageAttrs(updatedAttrs)
-
-    // Actualizar estado de imágenes
-    setImages(prev => prev.map(img =>
-      img.id === lastImageAttrs.id ? updatedAttrs : img
-    ))
-  }
-
-  // Función mejorada para insertar imagen (ÚNICA VERSIÓN - CORREGIDA)
-  const insertImageFromFile = (event) => {
-    const file = event.target.files[0]
-    if (!file || !tiptapEditor) return
-
-    const reader = new FileReader()
-    reader.onload = () => {
-      const imageId = `img-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-
-      console.log('📤 Insertando nueva imagen con ID:', imageId)
-
-      setIsUpdatingImages(true)
-
-      tiptapEditor
-        .chain()
-        .focus()
-        .insertContent({
-          type: 'resizableDraggableImage',
-          attrs: {
-            src: reader.result,
-            width: 300,
-            height: 'auto',
-            x: 0,
-            y: 0,
-            'data-id': imageId,
-            'data-type': 'resizableDraggableImage'
-          },
-        })
-        .run()
-
-      const newImageAttrs = {
-        id: imageId,
-        src: reader.result,
-        width: 300,
-        height: 'auto',
+      return {
+        id: img.getAttribute('data-id') || `quill-img-${Date.now()}-${index}`,
+        src: img.src,
+        width: widthMatch ? parseFloat(widthMatch[1]) : img.width || 300,
+        height: heightMatch ? parseFloat(heightMatch[1]) : img.height || 200,
         x: 0,
-        y: 0
-      }
+        y: 0,
+      };
+    });
 
-      setLastImageAttrs(newImageAttrs)
+    setImages(extractedImages);
+  };
 
-      // Agregar la imagen al estado inmediatamente
-      setImages(prev => {
-        const updated = [...prev, newImageAttrs]
-        console.log('✅ Estado de imágenes actualizado:', updated)
-        return updated
-      })
-
-      setTimeout(() => {
-        setIsUpdatingImages(false)
-      }, 500)
+  // Función para validar todos los campos obligatorios
+  const validateForm = () => {
+    if (!title.trim()) {
+      setMessage('Por favor, ingresa un título.');
+      return false;
     }
+    if (!description.trim()) {
+      setMessage('Por favor, ingresa una descripción.');
+      return false;
+    }
+    if (!question.trim()) {
+      setMessage('Por favor, ingresa la pregunta.');
+      return false;
+    }
+    if (!ageGroup) {
+      setMessage('Selecciona un rango de edad.');
+      return false;
+    }
+    if (!difficulty) {
+      setMessage('Selecciona una dificultad.');
+      return false;
+    }
+    if (steps.length === 0 || steps.some(step => step.trim() === '')) {
+      setMessage('Todos los pasos deben estar completos.');
+      return false;
+    }
+    
+    setMessage('');
+    return true;
+  };
 
-    reader.readAsDataURL(file)
+  const handlePreviewClick = () => {
+    if (validateForm()) {
+      startPreview();
+    }
+  };
 
-    // Limpiar el input para permitir seleccionar el mismo archivo
-    event.target.value = ''
+  const handleSaveClick = () => {
+    if (validateForm()) {
+      setMessage('Actividad guardada con éxito.');
+      // Aquí puedes agregar la lógica adicional para guardar
+      // Por ejemplo, llamar a una API o función del componente padre
+    }
+  };
+
+  const modules = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'font': [] }, { 'size': [] }],
+      [{ 'align': [] }],
+      ['image'],
+    ],
+    imageResize: {
+      // Opciones personalizadas (opcional)
+      parchment: Quill.import('parchment'),
+      modules: ['Resize', 'DisplaySize', 'Toolbar'],
+    }
   }
 
-  // Efecto para sincronizar imágenes cuando se monta el componente o cambia la descripción
+  const formats = [
+    'bold', 'italic', 'underline',
+    'color', 'background',
+    'font', 'size',
+    'align', 'image'
+  ]
+
   useEffect(() => {
-    if (description && tiptapEditor && !isUpdatingImages) {
-      console.log('🔄 Sincronizando imágenes del HTML existente')
+    if (typeof description === "string" && description.trim()) {
       extractImagesFromHTML(description)
     }
-  }, [description, tiptapEditor])
-
-  // Efecto para debug - mostrar estado actual de imágenes
-  useEffect(() => {
-    console.log('📊 Estado actual de imágenes:', images.length, images)
-  }, [images])
-
-  // Componente de controles de imagen
-  const ImageControls = () => {
-    if (!lastImageAttrs) return null
-  }
-
-  // Función para aplicar estilos al contenido del editor
-  const applyGlobalStyles = () => {
-    if (!tiptapEditor) return
-
-    const editorElement = document.querySelector('.ProseMirror')
-    if (editorElement) {
-      editorElement.style.color = textColor
-      editorElement.style.fontSize = fontSize
-      editorElement.style.fontWeight = fontWeight
-      editorElement.style.fontStyle = fontStyle
-      editorElement.style.textDecoration = textDecoration
-    }
-  }
-
-  // Aplicar estilos cuando cambien
-  React.useEffect(() => {
-    applyGlobalStyles()
-  }, [textColor, fontSize, fontWeight, fontStyle, textDecoration, tiptapEditor])
+  }, [])
 
   return (
     <div className="editor-container">
-
       <div className="input-group">
         <label className="input-label">Título de la actividad:</label>
         <input
@@ -281,110 +154,14 @@ export default function Editor({
 
       <div className="input-group">
         <label className="input-label">Descripción:</label>
-
-        <div
-          className="description-editor"
-          style={{ minHeight: containerHeight }}
-        >
-          <div className="toolbar">
-            <button
-              className={`toolbar-button ${tiptapEditor?.isActive('bold') ? 'active' : ''}`}
-              onClick={() => tiptapEditor?.chain().focus().toggleBold().run()}
-            >
-              <strong>B</strong>
-            </button>
-            <button
-              className={`toolbar-button ${tiptapEditor?.isActive('italic') ? 'active' : ''}`}
-              onClick={() => tiptapEditor?.chain().focus().toggleItalic().run()}
-            >
-              <em>I</em>
-            </button>
-            <button
-              className={`toolbar-button ${tiptapEditor?.isActive('underline') ? 'active' : ''}`}
-              onClick={() => tiptapEditor?.chain().focus().toggleUnderline?.().run()}
-            >
-              <u>U</u>
-            </button>
-
-            <div className="toolbar-separator"></div>
-
-            <label className="toolbar-label">Color:</label>
-            <input
-              type="color"
-              value={textColor}
-              onChange={(e) => {
-                const color = e.target.value
-                setTextColor(color)
-                tiptapEditor?.chain().focus().setTextColor(color).run()
-              }}
-            />
-
-            <label className="toolbar-label">Tamaño:</label>
-            <select
-              value={fontSize}
-              onChange={(e) => {
-                const size = e.target.value
-                setFontSize(size)
-                tiptapEditor?.chain().focus().setFontSize(size).run()
-              }}
-            >
-              <option value="12px">12px</option>
-              <option value="14px">14px</option>
-              <option value="16px">16px</option>
-              <option value="18px">18px</option>
-              <option value="20px">20px</option>
-            </select>
-
-            <div className="toolbar-separator"></div>
-
-            <button
-              className={`toolbar-button ${tiptapEditor?.isActive({ textAlign: 'left' }) ? 'active' : ''}`}
-              onClick={() => tiptapEditor?.chain().focus().setTextAlign('left').run()}
-              title="Alinear a la izquierda"
-            >
-              ⬅
-            </button>
-            <button
-              className={`toolbar-button ${tiptapEditor?.isActive({ textAlign: 'center' }) ? 'active' : ''}`}
-              onClick={() => tiptapEditor?.chain().focus().setTextAlign('center').run()}
-              title="Centrar"
-            >
-              ⬌
-            </button>
-            <button
-              className={`toolbar-button ${tiptapEditor?.isActive({ textAlign: 'right' }) ? 'active' : ''}`}
-              onClick={() => tiptapEditor?.chain().focus().setTextAlign('right').run()}
-              title="Alinear a la derecha"
-            >
-              ➡
-            </button>
-
-            <div className="toolbar-separator"></div>
-
-            <input
-              type="file"
-              accept="image/*"
-              onChange={insertImageFromFile}
-              ref={fileInputRef}
-              className="file-input"
-            />
-            <button
-              type="button"
-              className="image-button"
-              onClick={() => fileInputRef.current?.click()}
-              title="Insertar imagen"
-            >
-              🖼️
-            </button>
-          </div>
-
-          <ImageControls />
-
-          <div className="editor-container-area">
-            <EditorContent
-              editor={tiptapEditor}
-            />
-          </div>
+        <div className="description-editor" style={{ minHeight: containerHeight }}>
+          <ReactQuill
+            ref={quillRef}
+            value={description || ""}
+            onChange={handleQuillChange}
+            modules={modules}
+            formats={formats}
+          />
         </div>
       </div>
 
@@ -434,16 +211,11 @@ export default function Editor({
       </div>
 
       <div className="steps-section">
-        <div className="steps-title">
-          Pasos de la actividad
-        </div>
-
+        <div className="steps-title">Pasos de la actividad</div>
         <div className="steps-list">
           {steps.map((step, index) => (
             <div key={index} className="step-item">
-              <span className="step-number">
-                {index + 1}
-              </span>
+              <span className="step-number">{index + 1}</span>
               <textarea
                 value={step}
                 onChange={(e) => handleStepChange(index, e.target.value)}
@@ -455,7 +227,6 @@ export default function Editor({
                 type="button"
                 onClick={() => deleteStep(index)}
                 className="delete-step-button"
-                title="Eliminar paso"
               >
                 ×
               </button>
@@ -479,18 +250,25 @@ export default function Editor({
       </div>
 
       {message && (
-        <div className="error-message">
-          {message}
-        </div>
+        <div className="error-message">{message}</div>
       )}
 
-      <button
-        type="button"
-        onClick={startPreview}
-        className="preview-button"
-      >
-        Vista Previa 👁️
-      </button>
+      <div className="buttons-container">
+        <button
+          type="button"
+          onClick={handlePreviewClick}
+          className="preview-button"
+        >
+          Vista Previa
+        </button>
+        <button
+          type="button"
+          onClick={handleSaveClick}
+          className="save-activity-button"
+        >
+          Guardar actividad
+        </button>
+      </div>
     </div>
   )
 }
