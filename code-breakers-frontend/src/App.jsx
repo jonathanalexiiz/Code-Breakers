@@ -14,7 +14,8 @@ import Game from "./pages/Games";
 import PrimerJuego from "./pages/PrimerJuego";
 import CrearJuego from "./pages/crearJuego";
 import VistaPrevia from "./pages/VistaPrevia";
-
+import PortadaJuego from "./pages/PortadaJuego";
+import OtroJuegoPortada from "./pages/OtroJuegoPortada";
 
 import Layout from "./components/Layout";
 import Login from "./components/Login";
@@ -61,12 +62,12 @@ const App = () => {
 
   return (
     <>
-      <TestAPI /> {/* Ejecuta el test al cargar la app */}
+
       <Router>
         <Routes>
           <Route path="/" element={<Login onLogin={handleLogin} />} />
           {isAuthenticated ? (
-            <Route path="/" element={<Layout />}>
+            <Route path="/" element={<LayoutPrivado />}>
               <Route path="home" element={<Home />} />
               <Route path="about" element={<About />} />
               <Route path="contact" element={<Contact />} />
@@ -74,10 +75,13 @@ const App = () => {
               <Route path="portada-juego" element={<PortadaJuego />} />
               <Route path="otro-juego" element={<OtroJuegoPortada />} />
               <Route path="primer-juego" element={<PrimerJuego />} />
-              <Route path="crear-juego" element={<CrearJuego />} />
-              <Route path="vista-previa" element={<VistaPrevia />} />
-              <Route path="/test-api" element={<TestAPI />} />
 
+              {userRole === "docente" && (
+                <>
+                  <Route path="crear-juego" element={<CrearJuego />} />
+                  <Route path="vista-previa" element={<VistaPrevia />} />
+                </>
+              )}
             </Route>
           ) : (
             <Route path="*" element={<Navigate to="/" />} />

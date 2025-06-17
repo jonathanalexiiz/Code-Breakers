@@ -2,9 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import '../styles/games.css'
 
-import ImagenJuego1 from "../assets/images/lasaña.jpeg"
-import ImagenJuego2 from "../assets/images/2.jpg"
-import ImagenCrearJuego from "../assets/images/3.jpg"
+import ImagenJuego1 from "../images/lasaña.jpeg"
+import ImagenJuego2 from "../images/2.jpg"
+import ImagenCrearJuego from "../images/3.jpg"
 const Game = ({userRole}) => {
     return(
         
