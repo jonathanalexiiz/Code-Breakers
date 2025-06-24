@@ -10,7 +10,7 @@ return new class extends Migration
 
     public function up()
     {
-        Schema::connection('mongodb')->create('imagenes', function (Blueprint $collection) {
+        Schema::connection('mongodb')->create('imagens', function (Blueprint $collection) {
             $collection->index('actividad_id', null, ['name' => 'actividad_id_index']);
             $collection->timestamps();
         });
@@ -18,6 +18,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::connection('mongodb')->drop('imagenes');
+        Schema::connection('mongodb')->drop('imagens');
     }
 };

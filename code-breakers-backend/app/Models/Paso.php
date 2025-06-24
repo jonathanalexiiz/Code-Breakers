@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Models;
 
@@ -9,6 +9,7 @@ class Paso extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mongodb';
     protected $collection = 'pasos';
 
     protected $fillable = [
@@ -19,16 +20,22 @@ class Paso extends Model
 
     protected $casts = [
         'orden_correcto' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
+
+    public $timestamps = true;
 
     // Relaciones
     public function actividad()
     {
         return $this->belongsTo(Actividad::class, 'actividad_id');
     }
-
-    public function respuestasUsuario()
+     public function respuestasUsuario()
     {
         return $this->hasMany(RespuestaUsuario::class, 'paso_id');
     }
 }
+
+   
+

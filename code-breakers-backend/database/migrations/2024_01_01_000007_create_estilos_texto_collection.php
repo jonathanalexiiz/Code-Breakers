@@ -10,7 +10,7 @@ return new class extends Migration
 
     public function up()
     {
-        Schema::connection('mongodb')->create('estilos_texto', function (Blueprint $collection) {
+        Schema::connection('mongodb')->create('estilos_textos', function (Blueprint $collection) {
             $collection->index('actividad_id', null, ['name' => 'actividad_id_unique', 'unique' => true]);
             $collection->timestamps();
         });
@@ -18,6 +18,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::connection('mongodb')->drop('estilos_texto');
+        Schema::connection('mongodb')->drop('estilos_textos');
     }
 };

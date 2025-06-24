@@ -28,10 +28,14 @@ export default function Editor({
   addStep,
   limits,
   startPreview,
+  saveActivity,
+  resetForm,
   message,
   setMessage,
   images,
   setImages,
+  isLoading = false,
+  isSaving = false,
 }) {
   const quillRef = useRef(null)
 
@@ -40,25 +44,45 @@ export default function Editor({
     extractImagesFromHTML(value)
   }
 
-  const extractImagesFromHTML = (html) => {
+  const extractImagesFromHTML = async (html) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const imageElements = doc.querySelectorAll('img');
 
-    const extractedImages = Array.from(imageElements).map((img, index) => {
+    const extractedImages = [];
+
+    for (let i = 0; i < imageElements.length; i++) {
+      const img = imageElements[i];
       const style = img.getAttribute('style') || '';
       const widthMatch = style.match(/width:\s*(\d+\.?\d*)px/);
       const heightMatch = style.match(/height:\s*(\d+\.?\d*)px/);
 
-      return {
-        id: img.getAttribute('data-id') || `quill-img-${Date.now()}-${index}`,
-        src: img.src,
+      let imageSrc = img.src;
+
+      // Si es Base64 y muy grande, comprimir
+      if (imageSrc.startsWith('data:image')) {
+        const sizeInBytes = (imageSrc.split(',')[1].length * 3) / 4;
+        const sizeInMB = sizeInBytes / (1024 * 1024);
+
+        if (sizeInMB > 1) { // Comprimir si es mayor a 1MB
+          try {
+            imageSrc = await compressImage(imageSrc, 600, 400, 0.8);
+            console.log(`Imagen comprimida de ${sizeInMB.toFixed(2)}MB`);
+          } catch (error) {
+            console.error('Error comprimiendo imagen:', error);
+          }
+        }
+      }
+
+      extractedImages.push({
+        id: img.getAttribute('data-id') || `quill-img-${Date.now()}-${i}`,
+        src: imageSrc,
         width: widthMatch ? parseFloat(widthMatch[1]) : img.width || 300,
         height: heightMatch ? parseFloat(heightMatch[1]) : img.height || 200,
         x: 0,
         y: 0,
-      };
-    });
+      });
+    }
 
     setImages(extractedImages);
   };
@@ -89,7 +113,7 @@ export default function Editor({
       setMessage('Todos los pasos deben estar completos.');
       return false;
     }
-    
+
     setMessage('');
     return true;
   };
@@ -100,11 +124,15 @@ export default function Editor({
     }
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     if (validateForm()) {
-      setMessage('Actividad guardada con éxito.');
-      // Aquí puedes agregar la lógica adicional para guardar
-      // Por ejemplo, llamar a una API o función del componente padre
+      await saveActivity();
+    }
+  };
+
+  const handleResetClick = () => {
+    if (window.confirm('¿Estás seguro de que quieres resetear todos los campos? Se perderán todos los datos no guardados.')) {
+      resetForm();
     }
   };
 
@@ -117,7 +145,6 @@ export default function Editor({
       ['image'],
     ],
     imageResize: {
-      // Opciones personalizadas (opcional)
       parchment: Quill.import('parchment'),
       modules: ['Resize', 'DisplaySize', 'Toolbar'],
     }
@@ -149,6 +176,7 @@ export default function Editor({
           }}
           className="text-input"
           placeholder="Ingresa un título"
+          disabled={isLoading || isSaving}
         />
       </div>
 
@@ -161,6 +189,7 @@ export default function Editor({
             onChange={handleQuillChange}
             modules={modules}
             formats={formats}
+            readOnly={isLoading || isSaving}
           />
         </div>
       </div>
@@ -173,6 +202,7 @@ export default function Editor({
           className="text-input"
           placeholder="Escribe la pregunta que guía la actividad"
           rows={2}
+          disabled={isLoading || isSaving}
         />
       </div>
 
@@ -183,6 +213,7 @@ export default function Editor({
             value={ageGroup}
             onChange={(e) => setAgeGroup(e.target.value)}
             className="select-input"
+            disabled={isLoading || isSaving}
           >
             <option value="">-- Selecciona --</option>
             <option value="3-6">3-6 años</option>
@@ -201,6 +232,7 @@ export default function Editor({
               setMessage('')
             }}
             className="select-input"
+            disabled={isLoading || isSaving}
           >
             <option value="">-- Selecciona --</option>
             <option value="facil">Fácil (máx {limits.facil} pasos)</option>
@@ -222,11 +254,13 @@ export default function Editor({
                 className="step-input"
                 placeholder={`Describe el paso ${index + 1}`}
                 rows={2}
+                disabled={isLoading || isSaving}
               />
               <button
                 type="button"
                 onClick={() => deleteStep(index)}
                 className="delete-step-button"
+                disabled={isLoading || isSaving}
               >
                 ×
               </button>
@@ -241,7 +275,7 @@ export default function Editor({
           <button
             type="button"
             onClick={addStep}
-            disabled={!difficulty || steps.length >= limits[difficulty]}
+            disabled={!difficulty || steps.length >= limits[difficulty] || isLoading || isSaving}
             className="add-step-button"
           >
             + Agregar paso
@@ -250,7 +284,9 @@ export default function Editor({
       </div>
 
       {message && (
-        <div className="error-message">{message}</div>
+        <div className={`message ${message.includes('exitosamente') || message.includes('éxito') ? 'success-message' : 'error-message'}`}>
+          {isLoading && '⏳ '}{isSaving && '💾 '}{message}
+        </div>
       )}
 
       <div className="buttons-container">
@@ -258,15 +294,27 @@ export default function Editor({
           type="button"
           onClick={handlePreviewClick}
           className="preview-button"
+          disabled={isLoading || isSaving}
         >
-          Vista Previa
+          {isLoading ? '⏳ Validando...' : '👁️ Vista Previa'}
         </button>
+
         <button
           type="button"
           onClick={handleSaveClick}
           className="save-activity-button"
+          disabled={isLoading || isSaving}
         >
-          Guardar actividad
+          {isSaving ? '💾 Guardando...' : '💾 Guardar actividad'}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleResetClick}
+          className="reset-button"
+          disabled={isLoading || isSaving}
+        >
+          🔄 Resetear
         </button>
       </div>
     </div>

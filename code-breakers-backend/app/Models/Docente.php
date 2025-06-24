@@ -8,6 +8,7 @@ class Docente extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mongodb';
     protected $collection = 'docentes';
 
     protected $fillable = [
@@ -17,7 +18,7 @@ class Docente extends Model
     // Relaciones
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(MongoUser::class, 'usuario_id');
     }
 
     public function actividades()

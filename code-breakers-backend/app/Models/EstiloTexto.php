@@ -9,6 +9,7 @@ class EstiloTexto extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mongodb';
     protected $collection = 'estilos_texto';
 
     protected $fillable = [
@@ -24,9 +25,12 @@ class EstiloTexto extends Model
 
     protected $casts = [
         'containerHeight' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
-    // Relaciones
+    public $timestamps = true;
+
     public function actividad()
     {
         return $this->belongsTo(Actividad::class, 'actividad_id');

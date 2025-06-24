@@ -9,6 +9,7 @@ class Actividad extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mongodb';
     protected $collection = 'actividades';
 
     protected $fillable = [

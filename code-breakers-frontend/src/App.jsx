@@ -36,6 +36,7 @@ const App = () => {
   }, []);
 
   const handleLogin = (userData) => {
+    console.log("Usuario autenticado:", userData);
     setIsAuthenticated(true);
     setUserRole(userData.role);
     localStorage.setItem("role", userData.role);
@@ -76,10 +77,13 @@ const App = () => {
               <Route path="otro-juego" element={<OtroJuegoPortada />} />
               <Route path="primer-juego" element={<PrimerJuego />} />
 
+              <Route path="vista-previa" element={<VistaPrevia />} />
+              <Route path="vista-previa/:id" element={<VistaPrevia />} />
+
               {userRole === "docente" && (
                 <>
                   <Route path="crear-juego" element={<CrearJuego />} />
-                  <Route path="vista-previa" element={<VistaPrevia />} />
+                  <Route path="crear-juego/:id" element={<CrearJuego />} />
                 </>
               )}
             </Route>

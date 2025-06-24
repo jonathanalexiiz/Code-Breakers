@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Editor from './editor';
 import VistaPrevia from './VistaPrevia';
+import api from '../services/axiosConfig';
 import '../styles/crearJuego.css';
 
 export default function CrearJuego() {
@@ -19,12 +20,20 @@ export default function CrearJuego() {
   const [textAlign, setTextAlign] = useState('left');
   const [containerHeight, setContainerHeight] = useState(300);
   const [previewMode, setPreviewMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState('');
+
+  // Estados para la vista previa del juego
+  const [actividadId, setActividadId] = useState(null);
+  const [intentoId, setIntentoId] = useState(null);
   const [shuffledSteps, setShuffledSteps] = useState([]);
   const [userAnswers, setUserAnswers] = useState([]);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
-  const [message, setMessage] = useState('');
+  const [gameMessage, setGameMessage] = useState('');
+  const [score, setScore] = useState(0);
 
   const containerRef = useRef(null);
 
@@ -34,7 +43,6 @@ export default function CrearJuego() {
     dificil: 7
   };
 
-  // Validar que el paso no esté vacío antes de cambiar
   const handleStepChange = (index, value) => {
     if (value.trim() === '') {
       setMessage('El paso no puede estar vacío.');
@@ -77,7 +85,132 @@ export default function CrearJuego() {
     setImages((prev) => prev.filter(img => img.id !== id));
   };
 
-  const startPreview = () => {
+  // Función para validar la actividad usando la API
+  const validateActivity = async () => {
+    try {
+      setIsLoading(true);
+      const response = await api.post('/actividades/validate', {
+        title: title.trim(),
+        description: description.trim(),
+        question: question.trim(),
+        ageGroup,
+        difficulty,
+        steps: steps.filter(step => step.trim() !== '')
+      });
+
+      if (response.data.success) {
+        setMessage('');
+        return true;
+      } else {
+        setMessage(response.data.message || 'Error de validación');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error validando actividad:', error);
+      if (error.response?.data?.message) {
+        setMessage(error.response.data.message);
+      } else if (error.response?.data?.errors) {
+        const firstError = Object.values(error.response.data.errors)[0];
+        setMessage(Array.isArray(firstError) ? firstError[0] : firstError);
+      } else {
+        setMessage('Error al validar la actividad');
+      }
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Función para guardar la actividad
+  const saveActivity = async () => {
+    try {
+      setIsSaving(true);
+      setMessage('Guardando actividad...');
+
+      const activityData = {
+        title: title.trim(),
+        description: description.trim(),
+        question: question.trim(),
+        ageGroup,
+        difficulty,
+        steps: steps.filter(step => step.trim() !== ''),
+        images: images.map(img => ({
+          src: img.src,
+          width: img.width,
+          height: img.height,
+          x: img.x,
+          y: img.y
+        })),
+        textStyles: {
+          textColor,
+          fontSize,
+          fontWeight,
+          fontStyle,
+          textDecoration,
+          textAlign,
+          containerHeight
+        }
+      };
+
+      const response = await api.post('/actividades', activityData);
+
+      if (response.data.success) {
+        setMessage('¡Actividad guardada exitosamente!');
+        setActividadId(response.data.data.id);
+      } else {
+        setMessage(response.data.message || 'Error al guardar la actividad');
+      }
+    } catch (error) {
+      console.error('Error guardando actividad:', error);
+      if (error.response?.data?.message) {
+        setMessage(error.response.data.message);
+      } else if (error.response?.data?.errors) {
+        const firstError = Object.values(error.response.data.errors)[0];
+        setMessage(Array.isArray(firstError) ? firstError[0] : firstError);
+      } else {
+        setMessage('Error al guardar la actividad');
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Función para resetear el formulario
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setQuestion('');
+    setAgeGroup('');
+    setDifficulty('');
+    setSteps([]);
+    setImages([]);
+    setTextColor('#000000');
+    setFontSize('16px');
+    setFontWeight('normal');
+    setFontStyle('normal');
+    setTextDecoration('none');
+    setTextAlign('left');
+    setContainerHeight(300);
+    setMessage('');
+    setActividadId(null);
+    resetGameState();
+  };
+
+  const resetGameState = () => {
+    setIntentoId(null);
+    setShuffledSteps([]);
+    setUserAnswers([]);
+    setGameCompleted(false);
+    setShowFeedback(false);
+    setFeedback('');
+    setGameMessage('');
+    setScore(0);
+  };
+
+  // Función para iniciar la vista previa del juego
+
+  const startPreview = async () => {
+    // Validación básica local primero
     if (!title.trim()) {
       setMessage('Por favor, ingresa un título.');
       return;
@@ -103,20 +236,65 @@ export default function CrearJuego() {
       return;
     }
 
-    const shuffled = [...steps].sort(() => Math.random() - 0.5);
-    setShuffledSteps(shuffled);
-    setUserAnswers(Array(steps.length).fill(''));
-    setPreviewMode(true);
-    setGameCompleted(false);
-    setShowFeedback(false);
-    setMessage('');
+    // Validar con la API antes de mostrar la vista previa
+    const isValid = await validateActivity();
+    if (!isValid) return;
+
+    // Si no tenemos actividad guardada, necesitamos guardarla primero
+    if (!actividadId) {
+      await saveActivity();
+      // Esperar un momento para que se complete el guardado
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    // Si aún no tenemos ID de actividad, no podemos continuar
+    if (!actividadId) {
+      setMessage('Debes guardar la actividad antes de poder previsualizarla.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Obtener los datos del juego desde el backend
+      const gameResponse = await api.get(`/juego/actividades/${actividadId}`);
+
+      if (gameResponse.data.success) {
+        const gameData = gameResponse.data.data;
+        setShuffledSteps(gameData.shuffledSteps);
+        setUserAnswers(Array(gameData.totalSteps).fill(''));
+
+        // Iniciar un nuevo intento CON preview_mode=true
+        const attemptResponse = await api.post(`/juego/actividades/${actividadId}/intentos`, {
+          preview_mode: true  
+        });
+
+        if (attemptResponse.data.success) {
+          setIntentoId(attemptResponse.data.data.intento_id);
+          setPreviewMode(true);
+          resetGameState();
+          setMessage('');
+        } else {
+          setMessage('Error al iniciar el intento: ' + attemptResponse.data.message);
+        }
+      } else {
+        setMessage('Error al cargar el juego: ' + gameResponse.data.message);
+      }
+    } catch (error) {
+      console.error('Error iniciando preview:', error);
+      setMessage('Error al iniciar la vista previa');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const resetPreview = () => {
     setPreviewMode(false);
+    resetGameState();
     setMessage('');
   };
 
+  // Funciones para el juego en vista previa
   const handleDragStart = (e, step) => {
     e.dataTransfer.setData('text/plain', step);
   };
@@ -133,26 +311,72 @@ export default function CrearJuego() {
     setUserAnswers(updatedAnswers);
   };
 
-  const saveSteps = () => {
-    setGameCompleted(true);
-    setShowFeedback(true);
-    const correct = steps;
-    let feedbackText = '';
-    userAnswers.forEach((ans, i) => {
-      // Comparar ignorando mayúsculas/minúsculas y espacios extra
-      const answerNormalized = ans.trim().toLowerCase();
-      const correctNormalized = correct[i].trim().toLowerCase();
-      feedbackText += `Paso ${i + 1}: ${answerNormalized === correctNormalized ? '✅ Correcto' : `❌ Incorrecto (Correcto: ${correct[i]})`}\n`;
-    });
-    setFeedback(feedbackText);
+  // Función para enviar respuestas al backend
+  const saveSteps = async () => {
+    if (!intentoId) {
+      setGameMessage('Error: No hay intento activo.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setGameMessage('Evaluando respuestas...');
+
+      const response = await api.post(`/juego/intentos/${intentoId}/respuestas`, {
+        userAnswers: userAnswers
+      });
+
+      if (response.data.success) {
+        const result = response.data.data;
+        setGameCompleted(true);
+        setShowFeedback(true);
+        setFeedback(result.feedback);
+        setGameMessage(result.message);
+        setScore(result.score);
+      } else {
+        setGameMessage('Error al evaluar respuestas: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Error enviando respuestas:', error);
+      setGameMessage('Error al enviar las respuestas');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const resetGame = () => {
-    setUserAnswers(Array(steps.length).fill(''));
-    setGameCompleted(false);
-    setShowFeedback(false);
-    setFeedback('');
-    setMessage('');
+  // Función para reiniciar el juego
+  const resetGame = async () => {
+    if (!intentoId) {
+      setGameMessage('Error: No hay intento activo.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const response = await api.post(`/juego/intentos/${intentoId}/reiniciar`);
+
+      if (response.data.success) {
+        setIntentoId(response.data.data.intento_id);
+        setUserAnswers(Array(steps.length).fill(''));
+        setGameCompleted(false);
+        setShowFeedback(false);
+        setFeedback('');
+        setGameMessage('');
+        setScore(0);
+
+        // Volver a mezclar los pasos
+        const shuffled = [...steps].sort(() => Math.random() - 0.5);
+        setShuffledSteps(shuffled);
+      } else {
+        setGameMessage('Error al reiniciar: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Error reiniciando juego:', error);
+      setGameMessage('Error al reiniciar el juego');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return previewMode ? (
@@ -174,8 +398,10 @@ export default function CrearJuego() {
       gameCompleted={gameCompleted}
       showFeedback={showFeedback}
       feedback={feedback}
-      message={message}
-      setMessage={setMessage}
+      message={gameMessage}
+      score={score}
+      isLoading={isLoading}
+      setMessage={setGameMessage}
       resetPreview={resetPreview}
       saveSteps={saveSteps}
       resetGame={resetGame}
@@ -220,10 +446,14 @@ export default function CrearJuego() {
       updateImageSize={updateImageSize}
       removeImage={removeImage}
       startPreview={startPreview}
+      saveActivity={saveActivity}
+      resetForm={resetForm}
       message={message}
       setMessage={setMessage}
       containerRef={containerRef}
       limits={limits}
+      isLoading={isLoading}
+      isSaving={isSaving}
     />
   );
 }

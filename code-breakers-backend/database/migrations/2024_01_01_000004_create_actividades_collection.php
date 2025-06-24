@@ -10,7 +10,7 @@ return new class extends Migration
 
     public function up()
     {
-        Schema::connection('mongodb')->create('actividades', function (Blueprint $collection) {
+        Schema::connection('mongodb')->create('actividads', function (Blueprint $collection) {
             $collection->index('docente_id', null, ['name' => 'docente_id_index']);
             $collection->index('difficulty', null, ['name' => 'difficulty_index']);
             $collection->index('ageGroup', null, ['name' => 'ageGroup_index']);
@@ -21,6 +21,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::connection('mongodb')->drop('actividades');
+        Schema::connection('mongodb')->drop('actividads');
     }
 };

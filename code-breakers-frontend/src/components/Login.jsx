@@ -34,17 +34,22 @@ const Login = ({ onLogin }) => {
         email: form.email,
         password: form.password,
       });
+      console.log('Respuesta del login:', res);
 
       const { token, user } = res.data;
+      if (!token) {
+        console.error('❌ No se recibió un token del backend.');
+        setError((prev) => ({
+          ...prev,
+          general: 'Error: no se recibió token del servidor',
+        }));
+        return;
+      }
 
-      // Guardamos token en localStorage
       localStorage.setItem('token', token);
-
-      // Guardamos el usuario y su rol en App.jsx
-      onLogin(user);
-
-      // Redirigimos al home, el layout será gestionado en App.jsx según el rol
-      navigate('/home');
+      console.log("🔐 Token guardado:", localStorage.getItem('token'));
+      onLogin({ ...user, token });
+       navigate('/home');
 
     } catch (err) {
       console.error("Error:", err);

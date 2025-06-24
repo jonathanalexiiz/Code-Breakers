@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Models;
 
@@ -9,6 +9,7 @@ class Imagen extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mongodb';
     protected $collection = 'imagenes';
 
     protected $fillable = [
@@ -25,9 +26,12 @@ class Imagen extends Model
         'height' => 'integer',
         'x' => 'integer',
         'y' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
-    // Relaciones
+    public $timestamps = true;
+
     public function actividad()
     {
         return $this->belongsTo(Actividad::class, 'actividad_id');
