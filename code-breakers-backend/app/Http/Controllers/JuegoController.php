@@ -6,7 +6,7 @@ use App\Models\Actividad;
 use App\Models\Estudiante;
 use App\Models\IntentosActividad;
 use App\Models\RespuestaUsuario;
-use App\Models\Docente; 
+use App\Models\Docente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,12 +29,12 @@ class JuegoController extends Controller
 
             // Obtener pasos ordenados correctamente
             $pasosCorrectos = $actividad->pasos()->orderBy('orden_correcto')->get();
-            
+
             // Crear versión mezclada de los pasos (solo descripción)
             $pasosMezclados = $pasosCorrectos->pluck('descripcion_paso')->shuffle()->values();
 
             $gameData = [
-                'id' => $actividad->id,
+                'id' => $actividad->_id, // Usar _id para MongoDB
                 'title' => $actividad->title,
                 'description' => $actividad->description,
                 'question' => $actividad->question,
@@ -43,6 +43,7 @@ class JuegoController extends Controller
                 'images' => $actividad->imagenes,
                 'textStyles' => $actividad->estiloTexto,
                 'shuffledSteps' => $pasosMezclados,
+                'correctSteps' => $pasosCorrectos->pluck('descripcion_paso')->values(), // Agregar pasos correctos
                 'totalSteps' => $pasosCorrectos->count(),
                 'limitesPasos' => $actividad->limites_pasos
             ];
@@ -51,7 +52,6 @@ class JuegoController extends Controller
                 'success' => true,
                 'data' => $gameData
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -60,10 +60,7 @@ class JuegoController extends Controller
         }
     }
 
-    /**
-     * Iniciar un nuevo intento de actividad
-     * Modificado para permitir vista previa de docentes
-     */
+
     public function startAttempt(Request $request, $actividadId)
     {
         $validator = Validator::make($request->all(), [
@@ -82,7 +79,7 @@ class JuegoController extends Controller
         try {
             $user = Auth::user();
             $previewMode = $request->get('preview_mode', false);
-            
+
             // Verificar que la actividad existe
             $actividad = Actividad::find($actividadId);
             if (!$actividad) {
@@ -171,7 +168,6 @@ class JuegoController extends Controller
                     'preview_mode' => false
                 ]
             ], 201);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -200,7 +196,7 @@ class JuegoController extends Controller
         }
 
         try {
-            DB::beginTransaction();
+            // Remover DB::beginTransaction() para MongoDB
 
             $intento = IntentosActividad::with('actividad.pasos')->find($intentoId);
             if (!$intento) {
@@ -239,7 +235,7 @@ class JuegoController extends Controller
             foreach ($userAnswers as $index => $userAnswer) {
                 $correctStep = $correctSteps[$index];
                 $isCorrect = $this->compareAnswers($userAnswer, $correctStep->descripcion_paso);
-                
+
                 if ($isCorrect) {
                     $correctAnswers++;
                 }
@@ -252,7 +248,7 @@ class JuegoController extends Controller
                 ]);
 
                 // Crear línea de feedback
-                $feedbackLines[] = $isCorrect 
+                $feedbackLines[] = $isCorrect
                     ? "Paso " . ($index + 1) . ": ✅ Correcto"
                     : "Paso " . ($index + 1) . ": ❌ Incorrecto (Correcto: " . $correctStep->descripcion_paso . ")";
             }
@@ -260,7 +256,7 @@ class JuegoController extends Controller
             // Calcular puntuación
             $score = ($correctAnswers / $totalAnswers) * 100;
             $feedback = implode("\n", $feedbackLines);
-            
+
             // Mensaje de resultado (modificado para preview)
             $message = '';
             if ($intento->is_preview ?? false) {
@@ -285,7 +281,7 @@ class JuegoController extends Controller
                 'message' => $message
             ]);
 
-            DB::commit();
+            // Remover DB::commit() para MongoDB
 
             return response()->json([
                 'success' => true,
@@ -301,9 +297,8 @@ class JuegoController extends Controller
                     'is_preview' => $intento->is_preview ?? false
                 ]
             ]);
-
         } catch (\Exception $e) {
-            DB::rollback();
+            // Remover DB::rollback() para MongoDB
             return response()->json([
                 'success' => false,
                 'message' => 'Error al evaluar respuestas: ' . $e->getMessage()
@@ -318,8 +313,8 @@ class JuegoController extends Controller
     {
         try {
             $intento = IntentosActividad::with([
-                'actividad', 
-                'estudiante.usuario', 
+                'actividad',
+                'estudiante.usuario',
                 'respuestasUsuario'
             ])->find($intentoId);
 
@@ -334,7 +329,6 @@ class JuegoController extends Controller
                 'success' => true,
                 'data' => $intento
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -379,7 +373,6 @@ class JuegoController extends Controller
                     'is_preview' => $nuevoIntento->is_preview ?? false
                 ]
             ], 201);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -396,7 +389,7 @@ class JuegoController extends Controller
     {
         try {
             $user = Auth::user();
-            
+
             if ($estudianteId) {
                 $estudiante = Estudiante::find($estudianteId);
             } else {
@@ -412,9 +405,9 @@ class JuegoController extends Controller
 
             $intentos = IntentosActividad::with(['actividad', 'respuestasUsuario'])
                 ->where('estudiante_id', $estudiante->id)
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->where('is_preview', false)
-                          ->orWhereNull('is_preview');
+                        ->orWhereNull('is_preview');
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
@@ -423,7 +416,6 @@ class JuegoController extends Controller
                 'success' => true,
                 'data' => $intentos
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -440,7 +432,7 @@ class JuegoController extends Controller
     {
         try {
             $user = Auth::user();
-            
+
             if ($estudianteId) {
                 $estudiante = Estudiante::find($estudianteId);
             } else {
@@ -456,33 +448,33 @@ class JuegoController extends Controller
 
             // Estadísticas generales (excluyendo previews)
             $totalIntentos = IntentosActividad::where('estudiante_id', $estudiante->id)
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->where('is_preview', false)
-                          ->orWhereNull('is_preview');
+                        ->orWhereNull('is_preview');
                 })->count();
-                
+
             $intentosCompletos = IntentosActividad::where('estudiante_id', $estudiante->id)
                 ->where('gameCompleted', true)
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->where('is_preview', false)
-                          ->orWhereNull('is_preview');
+                        ->orWhereNull('is_preview');
                 })->count();
-            
+
             // actividads únicas jugadas (excluyendo previews)
             $actividadsJugadas = IntentosActividad::where('estudiante_id', $estudiante->id)
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->where('is_preview', false)
-                          ->orWhereNull('is_preview');
+                        ->orWhereNull('is_preview');
                 })
                 ->distinct('actividad_id')->count('actividad_id');
 
             // Estadísticas por dificultad (excluyendo previews)
             $statsPorDificultad = IntentosActividad::where('estudiante_id', $estudiante->id)
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->where('is_preview', false)
-                          ->orWhereNull('is_preview');
+                        ->orWhereNull('is_preview');
                 })
-                ->join('actividads', 'intentos_actividad.actividad_id', '=', 'actividads._id')
+                ->join('actividads', 'intentos_actividads.actividad_id', '=', 'actividads._id')
                 ->selectRaw('actividads.difficulty, COUNT(*) as total, SUM(CASE WHEN gameCompleted = true THEN 1 ELSE 0 END) as completados')
                 ->groupBy('actividads.difficulty')
                 ->get();
@@ -490,9 +482,9 @@ class JuegoController extends Controller
             // Últimos intentos (excluyendo previews)
             $ultimosIntentos = IntentosActividad::with('actividad')
                 ->where('estudiante_id', $estudiante->id)
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->where('is_preview', false)
-                          ->orWhereNull('is_preview');
+                        ->orWhereNull('is_preview');
                 })
                 ->orderBy('created_at', 'desc')
                 ->limit(5)
@@ -511,7 +503,6 @@ class JuegoController extends Controller
                 'success' => true,
                 'data' => $stats
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -539,9 +530,9 @@ class JuegoController extends Controller
 
             if ($request->has('search')) {
                 $search = $request->search;
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%");
+                        ->orWhere('description', 'like', "%{$search}%");
                 });
             }
 
@@ -551,7 +542,6 @@ class JuegoController extends Controller
                 'success' => true,
                 'data' => $actividads
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -569,7 +559,7 @@ class JuegoController extends Controller
         // Normalizar ambas respuestas
         $userNormalized = strtolower(trim($userAnswer));
         $correctNormalized = strtolower(trim($correctAnswer));
-        
+
         // Comparación exacta
         if ($userNormalized === $correctNormalized) {
             return true;
@@ -578,7 +568,7 @@ class JuegoController extends Controller
         // Comparación con similitud (opcional, para ser más flexible)
         $similarity = 0;
         similar_text($userNormalized, $correctNormalized, $similarity);
-        
+
         // Consideramos correcto si hay más del 85% de similitud
         return $similarity >= 85;
     }
@@ -591,7 +581,7 @@ class JuegoController extends Controller
     {
         try {
             $period = $request->get('period', 'all'); // all, month, week
-            
+
             $query = IntentosActividad::selectRaw('
                 estudiante_id,
                 COUNT(*) as total_intentos,
@@ -599,12 +589,12 @@ class JuegoController extends Controller
                 COUNT(DISTINCT actividad_id) as actividads_completadas,
                 ROUND(AVG(CASE WHEN gameCompleted = true THEN 100 ELSE 0 END), 2) as promedio_exito
             ')
-            ->with(['estudiante.usuario'])
-            ->where(function($query) {
-                $query->where('is_preview', false)
-                      ->orWhereNull('is_preview');
-            })
-            ->groupBy('estudiante_id');
+                ->with(['estudiante.usuario'])
+                ->where(function ($query) {
+                    $query->where('is_preview', false)
+                        ->orWhereNull('is_preview');
+                })
+                ->groupBy('estudiante_id');
 
             // Filtro por período
             if ($period === 'month') {
@@ -623,7 +613,6 @@ class JuegoController extends Controller
                 'success' => true,
                 'data' => $ranking
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

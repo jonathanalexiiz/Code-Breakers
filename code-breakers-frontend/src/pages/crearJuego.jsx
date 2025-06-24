@@ -240,33 +240,37 @@ export default function CrearJuego() {
     const isValid = await validateActivity();
     if (!isValid) return;
 
-    // Si no tenemos actividad guardada, necesitamos guardarla primero
-    if (!actividadId) {
-      await saveActivity();
-      // Esperar un momento para que se complete el guardado
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
+    let currentActividadId = actividadId;
 
-    // Si aún no tenemos ID de actividad, no podemos continuar
-    if (!actividadId) {
-      setMessage('Debes guardar la actividad antes de poder previsualizarla.');
-      return;
+    // Si no tenemos actividad guardada, necesitamos guardarla primero
+    if (!currentActividadId) {
+      const savedActivity = await saveActivity();
+      if (savedActivity && savedActivity._id) {
+        currentActividadId = savedActivity._id;
+        setActividadId(currentActividadId);
+      } else {
+        setMessage('Error al guardar la actividad. No se puede mostrar la vista previa.');
+        return;
+      }
     }
 
     try {
       setIsLoading(true);
+      setMessage('Cargando vista previa...');
 
       // Obtener los datos del juego desde el backend
-      const gameResponse = await api.get(`/juego/actividades/${actividadId}`);
+      const gameResponse = await api.get(`/juego/actividades/${currentActividadId}`);
 
       if (gameResponse.data.success) {
         const gameData = gameResponse.data.data;
-        setShuffledSteps(gameData.shuffledSteps);
-        setUserAnswers(Array(gameData.totalSteps).fill(''));
+        console.log('Datos del juego cargados:', gameData); // Debug
+
+        setShuffledSteps(gameData.shuffledSteps || []);
+        setUserAnswers(Array(gameData.totalSteps || steps.length).fill(''));
 
         // Iniciar un nuevo intento CON preview_mode=true
-        const attemptResponse = await api.post(`/juego/actividades/${actividadId}/intentos`, {
-          preview_mode: true  
+        const attemptResponse = await api.post(`/juego/actividades/${currentActividadId}/intentos`, {
+          preview_mode: true
         });
 
         if (attemptResponse.data.success) {
@@ -274,6 +278,7 @@ export default function CrearJuego() {
           setPreviewMode(true);
           resetGameState();
           setMessage('');
+          console.log('Vista previa iniciada correctamente'); // Debug
         } else {
           setMessage('Error al iniciar el intento: ' + attemptResponse.data.message);
         }
@@ -282,7 +287,7 @@ export default function CrearJuego() {
       }
     } catch (error) {
       console.error('Error iniciando preview:', error);
-      setMessage('Error al iniciar la vista previa');
+      setMessage('Error al iniciar la vista previa: ' + (error.response?.data?.message || error.message));
     } finally {
       setIsLoading(false);
     }
@@ -392,6 +397,11 @@ export default function CrearJuego() {
       textAlign={textAlign}
       containerHeight={containerHeight}
       images={images}
+      // Props necesarias para la integración completa
+      actividadId={actividadId}
+      intentoId={intentoId}
+      isPreviewMode={true}
+      // Props del estado del juego
       correctSteps={steps}
       shuffledSteps={shuffledSteps}
       userAnswers={userAnswers}
@@ -401,6 +411,7 @@ export default function CrearJuego() {
       message={gameMessage}
       score={score}
       isLoading={isLoading}
+      // Funciones de control
       setMessage={setGameMessage}
       resetPreview={resetPreview}
       saveSteps={saveSteps}

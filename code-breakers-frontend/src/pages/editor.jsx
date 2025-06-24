@@ -59,7 +59,7 @@ export default function Editor({
 
       let imageSrc = img.src;
 
-      // Si es Base64 y muy grande, comprimir
+
       if (imageSrc.startsWith('data:image')) {
         const sizeInBytes = (imageSrc.split(',')[1].length * 3) / 4;
         const sizeInMB = sizeInBytes / (1024 * 1024);
@@ -296,7 +296,7 @@ export default function Editor({
           className="preview-button"
           disabled={isLoading || isSaving}
         >
-          {isLoading ? '⏳ Validando...' : '👁️ Vista Previa'}
+          {isLoading ? 'Validando...' : 'Vista Previa'}
         </button>
 
         <button
@@ -305,7 +305,7 @@ export default function Editor({
           className="save-activity-button"
           disabled={isLoading || isSaving}
         >
-          {isSaving ? '💾 Guardando...' : '💾 Guardar actividad'}
+          {isSaving ? 'Guardando...' : 'Guardar actividad'}
         </button>
 
         <button

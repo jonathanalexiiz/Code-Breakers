@@ -9,11 +9,12 @@ class IntentosActividad extends Model
 {
     use HasFactory;
 
-    protected $collection = 'intentos_actividad';
+    protected $collection = 'intentos_actividads';
 
     protected $fillable = [
         'actividad_id',
         'estudiante_id',
+        'docente_id',
         'gameCompleted',
         'showFeedback',
         'feedback',
@@ -36,6 +37,11 @@ class IntentosActividad extends Model
     public function estudiante()
     {
         return $this->belongsTo(Estudiante::class, 'estudiante_id');
+    }
+
+    public function docente()
+    {
+        return $this->belongsTo(Docente::class, 'docente_id');
     }
 
     public function respuestasUsuario()
