@@ -12,24 +12,10 @@
     /* width: 100%; */
 }
 
-/* Tablet */
-@media (min-width: 768px) { 
-    .footer-container {
-        /* Si necesitas cambios específicos para tablets, agrégalos aquí */
-    }
-}
-
 /* Laptop */
 @media (min-width: 1024px) { 
     .footer-container {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         /* background-color: bisque; */
-    }
-}
-
-/* Escritorio */
-@media (min-width: 1280px) { 
-    .footer-container {
-        /* Puedes modificar otros estilos aquí si es necesario */
     }
 }

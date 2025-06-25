@@ -1,69 +1,102 @@
 /*.juegos-links {
     /* border: 5px solid black; */
 /*    padding: 1rem 2rem;
-}
-*/
+} */
 
-/*Nuevos estilos para el contenedor principal*/
-.games-conteiner{
+/* Nuevos estilos para el contenedor principal */
+.games-container {  /* Corregido el typo: era games-conteiner */
     padding: 2rem;
     text-align: center;
-    max-width: 1200px;
+    max-width: 1000px;  /* Reducido de 1200px */
     margin: 0 auto;
 }
 
-/*Estilos para el grid de botones*/
-.games-grid{
+/* Estilos para el grid de botones */
+.games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(250px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 280px));  /* Reducido minmax */
+    gap: 1.5rem;  /* Reducido de 2rem */
     padding: 0 1rem;
+    justify-content: center;  /* Centra los botones */
 }
 
-/*Estilos para cada boton de juego*/
-.game-button{
+/* Estilos para cada botón de juego */
+.game-button {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
     color: #333;
     background: #fff;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;  /* Reducido de 10px */
+    padding: 1rem;  /* Reducido de 1.5rem */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);  /* Sombra más sutil */
     transition: all 0.3s ease;
     border: 1px solid #e0e0e0;
+    max-width: 280px;  /* Limita el ancho máximo */
 }
+
 /* Efecto hover para interactividad */
 .game-button:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);  /* Movimiento más sutil */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);  /* Sombra más sutil */
 }
 
 /* Estilos para las imágenes */
 .game-button img {
     width: 100%;
-    height: 160px;
+    height: 120px;  /* Reducido de 160px */
     object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 1rem;
+    border-radius: 6px;  /* Reducido de 8px */
+    margin-bottom: 0.8rem;  /* Reducido de 1rem */
     border: 2px solid #f0f0f0;
 }
 
 /* Estilos para el texto */
 .game-button span {
-    font-size: 1.2rem;
+    font-size: 1.1rem;  /* Reducido de 1.2rem */
     font-weight: 600;
     color: #2c3e50;
+    text-align: center;
+}
+
+/* Responsive para tablets */
+@media (max-width: 768px) {
+    .games-container {
+        padding: 1.5rem;
+    }
+    
+    .games-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 250px));
+        gap: 1.2rem;
+    }
+    
+    .game-button img {
+        height: 100px;  /* Más pequeño en tablets */
+    }
 }
 
 /* Responsive para móviles */
 @media (max-width: 600px) {
+    .games-container {
+        padding: 1rem;
+    }
+    
     .games-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
     
     .game-button {
-        padding: 1rem;
+        padding: 0.8rem;  /* Más compacto en móvil */
+        max-width: 100%;
+    }
+    
+    .game-button img {
+        height: 90px;  /* Más pequeño en móvil */
+    }
+    
+    .game-button span {
+        font-size: 1rem;  /* Texto más pequeño en móvil */
     }
 }

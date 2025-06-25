@@ -6,7 +6,7 @@ const Header = ({ tipoUsuario, onLogout }) => {
   return (
     <header className="header-container">
       <div className="titulo-header">Juegos Interactivos</div>
-      <Navbar tipoUsuario={tipoUsuario} onLogout={onLogout} />
+      <Navbar tipoUsuario={tipoUsuario} onLogout={onLogout} showTitle={false} />
     </header>
   );
 };
