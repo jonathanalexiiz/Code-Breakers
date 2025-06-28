@@ -16,6 +16,9 @@ import CrearJuego from "./pages/crearJuego";
 import VistaPrevia from "./pages/VistaPrevia";
 import PortadaJuego from "./pages/PortadaJuego";
 import OtroJuegoPortada from "./pages/OtroJuegoPortada";
+import ActividadesEstudiante from "./pages/ActividadCard";
+import JuegoEstudiantePage from "./pages/JuegoEstudiantePage"
+
 
 import Layout from "./components/Layout";
 import Login from "./components/Login";
@@ -76,7 +79,8 @@ const App = () => {
               <Route path="portada-juego" element={<PortadaJuego />} />
               <Route path="otro-juego" element={<OtroJuegoPortada />} />
               <Route path="primer-juego" element={<PrimerJuego />} />
-
+              <Route path="/actividades" element={<ActividadesEstudiante />} />
+              <Route path="/juego-estudiante/:actividadId" element={<JuegoEstudiantePage />} /> 
               <Route path="vista-previa" element={<VistaPrevia />} />
               <Route path="vista-previa/:id" element={<VistaPrevia />} />
 
@@ -86,6 +90,7 @@ const App = () => {
                   <Route path="crear-juego/:id" element={<CrearJuego />} />
                 </>
               )}
+              
             </Route>
           ) : (
             <Route path="*" element={<Navigate to="/" />} />

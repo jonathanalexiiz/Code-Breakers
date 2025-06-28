@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/VistaPrevia.css';
+import '../styles/JuegoEstudiante.css';
 import 'react-quill/dist/quill.snow.css';
 import api from '../services/axiosConfig';
 
-export default function VistaPrevia({
+export default function JuegoEstudiante({
   title,
   description,
   question,
@@ -40,29 +40,32 @@ export default function VistaPrevia({
   const [localScore, setLocalScore] = useState(0);
   const [localIsLoading, setLocalIsLoading] = useState(false);
   const [localIntentoId, setLocalIntentoId] = useState(null);
-
-  // Agregar este efecto para asegurar que se inicie el intento
   useEffect(() => {
-    console.log('VistaPrevia - Verificando inicialización:', {
+  if (intentoId && intentoId !== localIntentoId) {
+    console.log('🔄 Actualizando intentoId desde props');
+    setLocalIntentoId(intentoId);
+  }
+}, [intentoId]);
+
+  // Debug: Agregar logs para verificar props recibidas
+  useEffect(() => {
+    console.log('JuegoEstudiante - Props recibidas:', {
       actividadId,
       intentoId,
-      localIntentoId,
-      isLoading: localIsLoading
+      isPreviewMode,
+      title,
+      shuffledSteps,
+      correctSteps
     });
-
-    // Si tenemos actividadId pero no intentoId y no estamos cargando, iniciar intento
-    if (actividadId && !intentoId && !localIntentoId && !localIsLoading) {
-      console.log('Iniciando nuevo intento automáticamente...');
-      startNewAttempt();
-    }
-  }, [actividadId, intentoId, localIntentoId, localIsLoading]);
+  }, [actividadId, intentoId, isPreviewMode, title, shuffledSteps, correctSteps]);
 
   // Inicializar estados locales
   useEffect(() => {
-    if (shuffledSteps.length > 0) {
+    if (shuffledSteps.length > 0 && localShuffledSteps.length === 0) {
       setLocalShuffledSteps(shuffledSteps);
       setLocalUserAnswers(Array(shuffledSteps.length).fill(''));
     }
+
     setLocalGameCompleted(gameCompleted || false);
     setLocalShowFeedback(showFeedback || false);
     setLocalFeedback(feedback || '');
@@ -70,28 +73,41 @@ export default function VistaPrevia({
     setLocalScore(score || 0);
     setLocalIntentoId(intentoId);
   }, [shuffledSteps, gameCompleted, showFeedback, feedback, message, score, intentoId]);
-
   // Función para cargar datos del juego desde la API
   const loadGameData = async () => {
-    if (!actividadId) return;
+    if (!actividadId) {
+      console.error('No hay actividadId para cargar datos');
+      setLocalMessage('Error: No se encontró el ID de la actividad');
+      return;
+    }
 
     try {
       setLocalIsLoading(true);
       setLocalMessage('Cargando actividad...');
 
+      console.log('Cargando datos del juego para actividadId:', actividadId);
+
       const response = await api.get(`/juego/actividades/${actividadId}`);
+
+      console.log('Respuesta de loadGameData:', response.data);
 
       if (response.data.success) {
         const gameData = response.data.data;
-        setLocalShuffledSteps(gameData.shuffledSteps);
-        setLocalUserAnswers(Array(gameData.totalSteps).fill(''));
+        console.log('Datos del juego cargados:', gameData);
+
+        setLocalShuffledSteps(gameData.shuffledSteps || []);
+        setLocalUserAnswers(Array(gameData.totalSteps || gameData.shuffledSteps?.length || 0).fill(''));
         setLocalMessage('');
       } else {
+        console.error('Error en loadGameData:', response.data.message);
         setLocalMessage('Error al cargar la actividad: ' + response.data.message);
       }
     } catch (error) {
-      console.error('Error cargando datos del juego:', error);
-      setLocalMessage('Error al cargar los datos del juego');
+      console.error('Error completo cargando datos del juego:', error);
+      console.error('Response data:', error.response?.data);
+
+      const errorMessage = error.response?.data?.message || error.message;
+      setLocalMessage('Error al cargar los datos del juego: ' + errorMessage);
     } finally {
       setLocalIsLoading(false);
     }
@@ -101,6 +117,7 @@ export default function VistaPrevia({
   const startNewAttempt = async () => {
     if (!actividadId) {
       console.error('No hay actividadId para iniciar intento');
+      setLocalMessage('Error: No se encontró el ID de la actividad');
       return;
     }
 
@@ -114,7 +131,7 @@ export default function VistaPrevia({
       const payload = isPreviewMode ? { preview_mode: true } : {};
       const response = await api.post(`/juego/actividades/${actividadId}/intentos`, payload);
 
-      console.log('Respuesta del servidor:', response.data);
+      console.log('Respuesta del servidor al crear intento:', response.data);
 
       if (response.data.success) {
         const newIntentoId = response.data.data.intento_id;
@@ -129,7 +146,7 @@ export default function VistaPrevia({
 
         // Cargar datos del juego si no los tenemos
         if (localShuffledSteps.length === 0) {
-          console.log('Cargando datos del juego...');
+          console.log('Cargando datos del juego después de crear intento...');
           await loadGameData();
         }
       } else {
@@ -139,12 +156,72 @@ export default function VistaPrevia({
     } catch (error) {
       console.error('Error completo al iniciar intento:', error);
       console.error('Response data:', error.response?.data);
-      setLocalMessage('Error al iniciar el intento: ' + (error.response?.data?.message || error.message));
+
+      const errorMessage = error.response?.data?.message || error.message;
+      setLocalMessage('Error al iniciar el intento: ' + errorMessage);
     } finally {
       setLocalIsLoading(false);
     }
   };
 
+  // Efecto para manejar la inicialización
+  // En JuegoEstudiante.js - Modificar el efecto de inicialización
+
+  useEffect(() => {
+    console.log('Efecto de inicialización:', {
+      actividadId,
+      intentoId,
+      localIntentoId,
+      localIsLoading,
+      shuffledStepsLength: localShuffledSteps.length,
+      shuffledStepsFromProps: shuffledSteps.length
+    });
+
+    // ✅ Usar datos de props si ya están listos
+    if (shuffledSteps.length > 0 && localShuffledSteps.length === 0) {
+      console.log('✅ Usando pasos de props directamente');
+      setLocalShuffledSteps(shuffledSteps);
+      setLocalUserAnswers(Array(shuffledSteps.length).fill(''));
+      if (intentoId) {
+        setLocalIntentoId(intentoId);
+      }
+      return;
+    }
+
+    // ✅ Iniciar intento si no hay uno
+    if (
+      actividadId &&
+      !intentoId &&
+      !localIntentoId &&
+      localShuffledSteps.length === 0 &&
+      !localIsLoading &&
+      !isPreviewMode
+    ) {
+      console.log('✅ Iniciando nuevo intento (modo estudiante)...');
+      startNewAttempt();
+      return;
+    }
+
+    // ✅ En modo preview, cargar datos si hay intentoId
+    if (actividadId && intentoId && localShuffledSteps.length === 0 && !localIsLoading) {
+      console.log('✅ Cargando datos del juego en modo preview...');
+      setLocalIntentoId(intentoId);
+      loadGameData();
+      return;
+    }
+
+    // ✅ Establecer intento si viene en props
+    if (intentoId && !localIntentoId) {
+      setLocalIntentoId(intentoId);
+    }
+  }, [
+    actividadId,
+    intentoId,
+    isPreviewMode,
+    localShuffledSteps.length
+  ]);
+
+  
   // Función para enviar respuestas al backend
   const submitAnswers = async () => {
     console.log('Enviando respuestas:', {
@@ -216,6 +293,7 @@ export default function VistaPrevia({
   // Función para reiniciar el juego
   const restartGame = async () => {
     if (!localIntentoId) {
+      console.error('No hay intento activo para reiniciar');
       setLocalMessage('Error: No hay intento activo.');
       return;
     }
@@ -224,7 +302,11 @@ export default function VistaPrevia({
       setLocalIsLoading(true);
       setLocalMessage('Reiniciando juego...');
 
+      console.log('Reiniciando intento:', localIntentoId);
+
       const response = await api.post(`/juego/intentos/${localIntentoId}/reiniciar`);
+
+      console.log('Respuesta de reinicio:', response.data);
 
       if (response.data.success) {
         setLocalIntentoId(response.data.data.intento_id);
@@ -238,11 +320,15 @@ export default function VistaPrevia({
         // Recargar datos del juego para obtener nuevos pasos mezclados
         await loadGameData();
       } else {
+        console.error('Error al reiniciar:', response.data.message);
         setLocalMessage('Error al reiniciar: ' + response.data.message);
       }
     } catch (error) {
       console.error('Error reiniciando juego:', error);
-      setLocalMessage('Error al reiniciar el juego');
+      console.error('Response data:', error.response?.data);
+
+      const errorMessage = error.response?.data?.message || error.message;
+      setLocalMessage('Error al reiniciar el juego: ' + errorMessage);
     } finally {
       setLocalIsLoading(false);
     }
@@ -329,21 +415,45 @@ export default function VistaPrevia({
   const isSequenceComplete = localUserAnswers.every(answer => answer.trim() !== '');
   const availableOptions = localShuffledSteps.filter(step => !localUserAnswers.includes(step));
 
-  // Efecto para inicializar el juego si no hay intento activo
-  useEffect(() => {
-    if (actividadId && !localIntentoId && !localIsLoading) {
-      startNewAttempt();
-    }
-  }, [actividadId]);
+  // Si no hay datos básicos, mostrar mensaje de error
+  if (!actividadId) {
+    return (
+      <div className="vista-previa-fullscreen">
+        <div className="error-container">
+          <div className="error-icon">❌</div>
+          <h3>Error: Actividad no encontrada</h3>
+          <p>No se pudo cargar la actividad. Por favor, intenta de nuevo.</p>
+          {resetPreview && (
+            <button onClick={resetPreview} className="control-button">
+              Volver al editor
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Si estamos cargando inicialmente y no tenemos datos
+  if (localIsLoading && localShuffledSteps.length === 0 && !localMessage.includes('Error')) {
+    return (
+      <div className="vista-previa-fullscreen">
+        <div className="loading-container">
+          <div className="loading-icon">⏳</div>
+          <h3>Cargando actividad...</h3>
+          <p>Por favor espera mientras preparamos el juego.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="vista-previa-fullscreen">
       {/* Header del juego */}
       <div className="game-header">
-        <h2 className="game-title">{title}</h2>
+        <h2 className="game-title">{title || 'Juego de Secuencias'}</h2>
         {localGameCompleted && (
           <div className="score-display">
-            <div 
+            <div
               className="score-number"
               style={{ color: getScoreColor(localScore) }}
             >
@@ -419,13 +529,12 @@ export default function VistaPrevia({
               {localUserAnswers.map((ans, i) => (
                 <div
                   key={`sequence-${i}`}
-                  className={`sequence-item ${
-                    localGameCompleted
-                      ? (ans === correctSteps[i] ? 'correct' : 'incorrect')
-                      : ans
+                  className={`sequence-item ${localGameCompleted
+                    ? (ans === correctSteps[i] ? 'correct' : 'incorrect')
+                    : ans
                       ? 'filled'
                       : 'empty'
-                  }`}
+                    }`}
                   onDragOver={!localGameCompleted && !localIsLoading ? handleInternalDragOver : undefined}
                   onDrop={!localGameCompleted && !localIsLoading ? (e) => handleInternalDrop(e, i) : undefined}
                   onClick={() => ans && handleSequenceClick(i)}
@@ -451,16 +560,19 @@ export default function VistaPrevia({
           </div>
         </div>
       </div>
-             {/* Controles del juego */}
+
+      {/* Controles del juego */}
       <div className="game-controls">
-        <button
-          onClick={resetPreview || (() => { })}
-          className="control-button secondary"
-          disabled={localIsLoading}
-        >
-          <span className="button-icon">←</span>
-          Volver al editor
-        </button>
+        {resetPreview && (
+          <button
+            onClick={resetPreview}
+            className="control-button secondary"
+            disabled={localIsLoading}
+          >
+            <span className="button-icon">⬅️</span>
+            Volver al editor
+          </button>
+        )}
 
         {!localGameCompleted ? (
           <button
@@ -499,7 +611,8 @@ export default function VistaPrevia({
             )}
           </button>
         )}
-      </div>       
+      </div>
+
       {/* Retroalimentación */}
       {localShowFeedback && localFeedback && (
         <div className="feedback-container">
@@ -508,10 +621,9 @@ export default function VistaPrevia({
             {localFeedback.split('\n').map((line, index) => (
               <div
                 key={`feedback-${index}`}
-                className={`feedback-line ${
-                  line.includes('✅') ? 'correct' :
+                className={`feedback-line ${line.includes('✅') ? 'correct' :
                   line.includes('❌') ? 'incorrect' : 'neutral'
-                }`}
+                  }`}
               >
                 {line}
               </div>
@@ -544,14 +656,13 @@ export default function VistaPrevia({
 
       {/* Mensaje de estado */}
       {localMessage && (
-        <div className={`status-message ${
-          localMessage.includes('éxito') || localMessage.includes('guardado') || localMessage.includes('Perfecto')
-            ? 'success' :
+        <div className={`status-message ${localMessage.includes('éxito') || localMessage.includes('guardado') || localMessage.includes('Perfecto')
+          ? 'success' :
           localMessage.includes('error') || localMessage.includes('Error')
             ? 'error' :
-          localMessage.includes('completa') || localMessage.includes('Evaluando') || localMessage.includes('Procesando')
-            ? 'warning' : 'info'
-        }`}>
+            localMessage.includes('completa') || localMessage.includes('Evaluando') || localMessage.includes('Procesando')
+              ? 'warning' : 'info'
+          }`}>
           <span className="status-icon">
             {localIsLoading ? '⏳' :
               localMessage.includes('éxito') || localMessage.includes('guardado') || localMessage.includes('Perfecto') ? '✅' :
@@ -572,6 +683,5 @@ export default function VistaPrevia({
         </div>
       )}
     </div>
-    
   );
 }

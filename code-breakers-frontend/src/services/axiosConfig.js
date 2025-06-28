@@ -2,10 +2,10 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:8000/api',
-  withCredentials: false, // true solo si usas cookies con Sanctum
+  withCredentials: false, // solo true si usas cookies con Sanctum
 });
 
-//  Interceptor para adjuntar token JWT
+// Interceptor para adjuntar token JWT
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -14,21 +14,41 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor de respuesta para manejar errores globales
+// Interceptor único para manejar errores globales
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Token inválido o expirado
-      localStorage.removeItem('token');
+    const status = error.response?.status;
+    const url = error.config?.url;
 
-      // Redirigir al login (solo si estamos en el navegador)
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+    console.log('🔴 Interceptor de respuesta:', {
+      url,
+      status,
+      message: error.response?.data?.message,
+    });
+
+    if (status === 401) {
+      const mensaje = error.response?.data?.message || '';
+
+      // Solo redirige si es un error auténtico de token inválido
+      if (
+        mensaje.toLowerCase().includes('unauthenticated') ||
+        mensaje.toLowerCase().includes('token') ||
+        mensaje.toLowerCase().includes('no autorizado')
+      ) {
+        console.warn('🔐 Token inválido o expirado, redirigiendo...');
+        localStorage.removeItem('token');
+
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+      } else {
+        console.warn('🔁 Error 401 no relacionado con token. No se redirige.');
       }
     }
 
-    return Promise.reject(error); // sigue lanzando el error para manejarlo localmente si hace falta
+
+    return Promise.reject(error);
   }
 );
 

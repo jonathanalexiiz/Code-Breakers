@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ActividadController;
 use App\Http\Controllers\JuegoController;
+use App\Http\Controllers\ActividadEstudianteController;
 
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -44,11 +45,20 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::get('/juego/historial/{estudianteId}', [JuegoController::class, 'getStudentHistory']);
     Route::get('/juego/estadisticas', [JuegoController::class, 'getStudentStats']);
     Route::get('/juego/estadisticas/{estudianteId}', [JuegoController::class, 'getStudentStats']);
-    
+
+    // ==== ACTIVIDADES ESTUDIANTE ====
+
+    Route::get('/estudiante/actividades', [ActividadEstudianteController::class, 'index']);
+    Route::get('/estudiante/actividades/{id}', [ActividadEstudianteController::class, 'show']);
+
+    Route::post('/estudiante/actividades/{actividadId}/start', [JuegoController::class, 'startAttempt']);
+
+
+
     // Ruta adicional para vista previa de docentes (basada en el método startAttempt con preview_mode)
-    Route::post('/juego/preview/{actividadId}', function($actividadId) {
+    Route::post('/juego/preview/{actividadId}', function ($actividadId) {
         return app(JuegoController::class)->startAttempt(
-            request()->merge(['preview_mode' => true]), 
+            request()->merge(['preview_mode' => true]),
             $actividadId
         );
     });

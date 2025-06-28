@@ -15,11 +15,16 @@ const Game = ({userRole}) => {
                 <Link to="/primer-juego" className="game-button">
                 <img src="ImagenJuego1" alt="Primer juego" />
                 <span>Primer juego</span>
-                </Link>
+                </Link> 
                 {/* Botón 2 */}
                 <Link to="/otro-juego" className="game-button">
                     <img src={ImagenJuego2} alt="Segundo juego" />
                     <span>Segundo juego</span>
+                </Link>
+
+                <Link to="/actividades" className="game-button">
+                <img src="ImagenJuego1" alt="Actividaes" />
+                <span>Actividaes</span>
                 </Link>
 
                 {/* Botón 3 - SOLO para docentes */}

@@ -147,7 +147,7 @@ class ActividadController extends Controller
                     'message' => "La dificultad {$request->difficulty} permite máximo {$maxSteps} pasos"
                 ], 422);
             }
-
+ 
             $actividad = new Actividad([
                 'docente_id' => $docente->id,
                 'title' => $request->title,
@@ -158,7 +158,8 @@ class ActividadController extends Controller
             ]);
 
             $resultado = $actividad->save();
-
+            $idString = (string) $actividad->_id;
+            
             if (!$resultado) {
                 throw new \Exception('No se pudo guardar la actividad');
             }

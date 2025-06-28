@@ -18,7 +18,7 @@ class Estudiante extends Model
     // Relaciones
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'usuario_id');
     }
 
     public function intentosActividad()
