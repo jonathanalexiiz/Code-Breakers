@@ -8,39 +8,49 @@
         "main"
         "footer";
     min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
     /* border: 5px solid pink; */
-  }
-  
-  /* Tablet */
-  @media (min-width: 768px) { 
+}
+
+/* Tablet */
+@media (min-width: 768px) {
     .layout-container {
-        grid-template-columns: auto 1fr; /* Dos columnas */
+        grid-template-columns: 1fr; /* Una sola columna centrada */
         grid-template-areas: 
-            "header header"
-            "main main"
-            "footer footer";
+            "header"
+            "main"
+            "footer";
     }
-  }
-  
-  /* Laptop */
-  @media (min-width: 1024px) { 
+}
+
+
+/* Escritorio */
+@media (min-width: 1280px) {
     .layout-container {
-        grid-template-columns: auto 1fr auto; /* Tres columnas */
+        grid-template-columns: 1fr; /* Una sola columna centrada */
         grid-template-areas: 
-            "header header header"
-            "main main main"
-            "footer footer footer";
+            "header"
+            "main"
+            "footer";
     }
-  }
-  
-  /* Escritorio */
-  @media (min-width: 1280px) { 
-    .layout-container {
-        grid-template-columns: auto 1fr auto; /* Tres columnas */
-        grid-template-areas: 
-            "header header header"
-            "main main main"
-            "footer footer footer";
-    }
-  }
-  
+}
+
+/* Asegurar que el header ocupe todo el ancho */
+.layout-container > header {
+    grid-area: header;
+    width: 100%;
+}
+
+/* Agregar esto a layout.css */
+.layout-container > main {
+    grid-area: main;
+    width: 100%;
+}
+
+/* Asegurar que el footer ocupe todo el ancho */
+.layout-container > footer {
+    grid-area: footer;
+    width: 100%;
+}
