@@ -106,7 +106,6 @@ export default function CrearJuego() {
         return false;
       }
     } catch (error) {
-      console.error('Error validando actividad:', error);
       if (error.response?.data?.message) {
         setMessage(error.response.data.message);
       } else if (error.response?.data?.errors) {
@@ -161,7 +160,6 @@ export default function CrearJuego() {
         setMessage(response.data.message || 'Error al guardar la actividad');
       }
     } catch (error) {
-      console.error('Error guardando actividad:', error);
       if (error.response?.data?.message) {
         setMessage(error.response.data.message);
       } else if (error.response?.data?.errors) {
@@ -209,8 +207,8 @@ export default function CrearJuego() {
 
   // Función para iniciar la vista previa del juego
 
-  const startPreview = async () => {
-    // Validación básica local primero
+  const startPreview = () => {
+    // Validación básica local
     if (!title.trim()) {
       setMessage('Por favor, ingresa un título.');
       return;
@@ -236,61 +234,16 @@ export default function CrearJuego() {
       return;
     }
 
-    // Validar con la API antes de mostrar la vista previa
-    const isValid = await validateActivity();
-    if (!isValid) return;
+    // 🟢 Primero limpiar estado previo
+    resetGameState();
 
-    let currentActividadId = actividadId;
+    // ✅ Luego mezclar pasos y preparar Vista Previa
+    const mezclados = [...steps].sort(() => Math.random() - 0.5);
+    setShuffledSteps(mezclados);
+    setUserAnswers(Array(mezclados.length).fill(''));
 
-    // Si no tenemos actividad guardada, necesitamos guardarla primero
-    if (!currentActividadId) {
-      const savedActivity = await saveActivity();
-      if (savedActivity && savedActivity._id) {
-        currentActividadId = savedActivity._id;
-        setActividadId(currentActividadId);
-      } else {
-        setMessage('Error al guardar la actividad. No se puede mostrar la vista previa.');
-        return;
-      }
-    }
-
-    try {
-      setIsLoading(true);
-      setMessage('Cargando vista previa...');
-
-      // Obtener los datos del juego desde el backend
-      const gameResponse = await api.get(`/juego/actividades/${currentActividadId}`);
-
-      if (gameResponse.data.success) {
-        const gameData = gameResponse.data.data;
-        console.log('Datos del juego cargados:', gameData); // Debug
-
-        setShuffledSteps(gameData.shuffledSteps || []);
-        setUserAnswers(Array(gameData.totalSteps || steps.length).fill(''));
-
-        // Iniciar un nuevo intento CON preview_mode=true
-        const attemptResponse = await api.post(`/juego/actividades/${currentActividadId}/intentos`, {
-          preview_mode: true
-        });
-
-        if (attemptResponse.data.success) {
-          setIntentoId(attemptResponse.data.data.intento_id);
-          setPreviewMode(true);
-          resetGameState();
-          setMessage('');
-          console.log('Vista previa iniciada correctamente'); // Debug
-        } else {
-          setMessage('Error al iniciar el intento: ' + attemptResponse.data.message);
-        }
-      } else {
-        setMessage('Error al cargar el juego: ' + gameResponse.data.message);
-      }
-    } catch (error) {
-      console.error('Error iniciando preview:', error);
-      setMessage('Error al iniciar la vista previa: ' + (error.response?.data?.message || error.message));
-    } finally {
-      setIsLoading(false);
-    }
+    setPreviewMode(true);
+    setMessage('');
   };
 
   const resetPreview = () => {
@@ -342,7 +295,6 @@ export default function CrearJuego() {
         setGameMessage('Error al evaluar respuestas: ' + response.data.message);
       }
     } catch (error) {
-      console.error('Error enviando respuestas:', error);
       setGameMessage('Error al enviar las respuestas');
     } finally {
       setIsLoading(false);
@@ -377,7 +329,6 @@ export default function CrearJuego() {
         setGameMessage('Error al reiniciar: ' + response.data.message);
       }
     } catch (error) {
-      console.error('Error reiniciando juego:', error);
       setGameMessage('Error al reiniciar el juego');
     } finally {
       setIsLoading(false);

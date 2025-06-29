@@ -153,40 +153,53 @@ const JuegoEstudiantePage = () => {
     }, [actividad]);
 
     const startIntento = async (actividadId) => {
-        try {
-            const response = await api.post(`/estudiante/actividades/${actividadId}/start`);
+  try {
+    const response = await api.post(`/estudiante/actividades/${actividadId}/start`);
 
-            if (response.data.success) {
-                setGameData(prev => ({
-                    ...prev,
-                    intentoId: response.data.data.intento_id
-                }));
-            } else {
-                // Caso: respuesta recibida, pero no es success
-                setError(response.data.message || 'No se pudo iniciar intento');
-            }
+    if (response.data.success) {
+      const intentoId = response.data.data.intento_id;
 
-        } catch (err) {
-            console.error('🔥 Error en startIntento:', {
-                error: err.message,
-                response: err.response,
-                data: err.response?.data
-            });
+      // Ahora obtenemos los datos del juego (shuffledSteps, correctSteps)
+      const juegoResp = await api.get(`/juego/actividades/${actividadId}`);
 
-            if (err.response?.status === 401) {
-                // ⚠️ En lugar de redirigir, mostramos un mensaje
-                setError('No tienes permiso para jugar esta actividad o tu sesión ha expirado.');
-                return;
-            }
+      if (juegoResp.data.success) {
+        const juego = juegoResp.data.data;
 
-            if (err.response?.status === 403) {
-                setError('Acceso denegado. Puede que no tengas autorización para esta actividad.');
-                return;
-            }
+        setGameData(prev => ({
+          ...prev,
+          intentoId,
+          shuffledSteps: juego.shuffledSteps || [],
+          correctSteps: juego.correctSteps || [],
+          userAnswers: Array((juego.shuffledSteps || []).length).fill('')
+        }));
+      } else {
+        throw new Error('No se pudo cargar los pasos del juego');
+      }
+    } else {
+      setError(response.data.message || 'No se pudo iniciar intento');
+    }
 
-            setError(err.response?.data?.message || err.message || 'Error al iniciar intento');
-        }
-    };
+  } catch (err) {
+    console.error('🔥 Error en startIntento:', {
+      error: err.message,
+      response: err.response,
+      data: err.response?.data
+    });
+
+    if (err.response?.status === 401) {
+      setError('No tienes permiso para jugar esta actividad o tu sesión ha expirado.');
+      return;
+    }
+
+    if (err.response?.status === 403) {
+      setError('Acceso denegado. Puede que no tengas autorización para esta actividad.');
+      return;
+    }
+
+    setError(err.response?.data?.message || err.message || 'Error al iniciar intento');
+  }
+};
+
 
 
     const handleBackToActivities = () => {

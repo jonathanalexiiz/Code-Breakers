@@ -183,28 +183,12 @@ const ActividadCard = () => {
                                         {actividad.nombre || actividad.title}
                                     </h3>
 
-                                    {(actividad.descripcion || actividad.description) && (
-                                        <p className="activity-description">
-                                            {(() => {
-                                                const desc = actividad.descripcion || actividad.description;
-                                                // Remover HTML tags para el preview
-                                                const cleanDesc = desc.replace(/<[^>]*>/g, '');
-                                                return cleanDesc.length > 100
-                                                    ? `${cleanDesc.substring(0, 100)}...`
-                                                    : cleanDesc;
-                                            })()}
-                                        </p>
-                                    )}
+                                    
 
                                     <div className="card-stats">
                                         <span className="stat-item">
                                             📝 {actividad.pasos?.length || actividad.totalSteps || 0} pasos
                                         </span>
-                                        {actividad.docente && (
-                                            <span className="stat-item">
-                                                👨‍🏫 {actividad.docente.nombre || 'Docente'}
-                                            </span>
-                                        )}
                                     </div>
                                 </div>
 
@@ -213,11 +197,6 @@ const ActividadCard = () => {
                                         <span className="play-icon">▶️</span>
                                         Jugar Ahora
                                     </button>
-                                </div>
-
-                                {/* Debug info - remover en producción */}
-                                <div style={{ fontSize: '10px', color: '#666', padding: '5px' }}>
-                                    ID: {activityId}
                                 </div>
                             </div>
                         );

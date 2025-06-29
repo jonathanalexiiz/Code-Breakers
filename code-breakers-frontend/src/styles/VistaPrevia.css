@@ -87,21 +87,19 @@
 
 /* Descripción */
 .description-container {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .description-text {
-  color: #333;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
   font-size: 1rem;
   line-height: 1.6;
-  text-align: center;
+  white-space: pre-wrap;
 }
+
 
 .description-text img {
   max-width: 200px;
@@ -794,7 +792,6 @@
 /* Print styles */
 @media print {
   .vista-previa-fullscreen {
-    background: white !important;
     color: black !important;
     padding: 1rem !important;
     position: static !important;
@@ -806,4 +803,65 @@
   .close-preview-button {
     display: none !important;
   }
+}
+.quill-html-rendered {
+  padding: 1rem;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 🔧 Estilos de alineación de texto */
+.quill-html-rendered p {
+  text-align: inherit;
+}
+
+/* 🔧 Estilos para imágenes insertadas con alineación */
+.quill-html-rendered img {
+  max-width: 100%;
+  height: auto;
+  display: inline-block; /* permite que el float funcione */
+}
+
+/* 🔧 Si Quill usa float (por ejemplo, para mover imagen a la izquierda o derecha) */
+.quill-html-rendered img[style*="float:left"] {
+  float: left;
+  margin-right: 1rem;
+}
+.quill-html-rendered img[style*="float:right"] {
+  float: right;
+  margin-left: 1rem;
+}
+
+/* 🔧 Si usa text-align del contenedor para centrar */
+.quill-html-rendered div[style*="text-align:center"],
+.quill-html-rendered p[style*="text-align:center"] {
+  text-align: center;
+}
+.quill-html-rendered p[style*="text-align:right"] {
+  text-align: right;
+}
+.quill-html-rendered p[style*="text-align:left"] {
+  text-align: left;
+}
+.quill-html-rendered h1, 
+.quill-html-rendered h2,
+.quill-html-rendered p,
+.quill-html-rendered strong,
+.quill-html-rendered em,
+.quill-html-rendered u {
+  all: revert;
+}
+
+.quill-html-rendered img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: auto; /* centrado */
+}
+/* 🔧 Permitir que imágenes con estilos personalizados se posicionen correctamente */
+.quill-html-rendered img[style*="left"],
+.quill-html-rendered img[style*="top"],
+.quill-html-rendered img[style*="position"] {
+  position: absolute;
 }

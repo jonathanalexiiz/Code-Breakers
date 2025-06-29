@@ -54,20 +54,21 @@ export default function Editor({
     for (let i = 0; i < imageElements.length; i++) {
       const img = imageElements[i];
       const style = img.getAttribute('style') || '';
+
       const widthMatch = style.match(/width:\s*(\d+\.?\d*)px/);
       const heightMatch = style.match(/height:\s*(\d+\.?\d*)px/);
+      const leftMatch = style.match(/left:\s*(\d+\.?\d*)px/);
+      const topMatch = style.match(/top:\s*(\d+\.?\d*)px/);
 
       let imageSrc = img.src;
-
 
       if (imageSrc.startsWith('data:image')) {
         const sizeInBytes = (imageSrc.split(',')[1].length * 3) / 4;
         const sizeInMB = sizeInBytes / (1024 * 1024);
 
-        if (sizeInMB > 1) { // Comprimir si es mayor a 1MB
+        if (sizeInMB > 1) {
           try {
             imageSrc = await compressImage(imageSrc, 600, 400, 0.8);
-            console.log(`Imagen comprimida de ${sizeInMB.toFixed(2)}MB`);
           } catch (error) {
             console.error('Error comprimiendo imagen:', error);
           }
@@ -79,8 +80,8 @@ export default function Editor({
         src: imageSrc,
         width: widthMatch ? parseFloat(widthMatch[1]) : img.width || 300,
         height: heightMatch ? parseFloat(heightMatch[1]) : img.height || 200,
-        x: 0,
-        y: 0,
+        x: leftMatch ? parseFloat(leftMatch[1]) : 0,
+        y: topMatch ? parseFloat(topMatch[1]) : 0,
       });
     }
 

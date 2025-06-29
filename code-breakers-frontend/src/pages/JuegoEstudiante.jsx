@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '../styles/JuegoEstudiante.css';
 import 'react-quill/dist/quill.snow.css';
 import api from '../services/axiosConfig';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function JuegoEstudiante({
   title,
@@ -40,12 +42,19 @@ export default function JuegoEstudiante({
   const [localScore, setLocalScore] = useState(0);
   const [localIsLoading, setLocalIsLoading] = useState(false);
   const [localIntentoId, setLocalIntentoId] = useState(null);
+
+  const navigate = useNavigate();
+
+  const handleBackToActivities = () => {
+    navigate('/actividades');
+  };
+
   useEffect(() => {
-  if (intentoId && intentoId !== localIntentoId) {
-    console.log('🔄 Actualizando intentoId desde props');
-    setLocalIntentoId(intentoId);
-  }
-}, [intentoId]);
+    if (intentoId && intentoId !== localIntentoId) {
+      console.log('🔄 Actualizando intentoId desde props');
+      setLocalIntentoId(intentoId);
+    }
+  }, [intentoId]);
 
   // Debug: Agregar logs para verificar props recibidas
   useEffect(() => {
@@ -221,7 +230,7 @@ export default function JuegoEstudiante({
     localShuffledSteps.length
   ]);
 
-  
+
   // Función para enviar respuestas al backend
   const submitAnswers = async () => {
     console.log('Enviando respuestas:', {
@@ -394,6 +403,10 @@ export default function JuegoEstudiante({
     doc.querySelectorAll('img[data-type="resizableDraggableImage"]').forEach(img => img.remove());
     return doc.body.innerHTML;
   };
+  const normalizeText = (html) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent.trim();
+  };
 
   // Funciones para score y mensajes
   const getScoreColor = (score) => {
@@ -447,6 +460,7 @@ export default function JuegoEstudiante({
   }
 
   return (
+
     <div className="vista-previa-fullscreen">
       {/* Header del juego */}
       <div className="game-header">
@@ -468,11 +482,13 @@ export default function JuegoEstudiante({
       {description && (
         <div className="description-container">
           <div
-            className="description-text"
-            dangerouslySetInnerHTML={{ __html: processDescriptionHTML(description) }}
+            className="quill-html-rendered"
+            style={{ textAlign: 'justify', fontSize: '16px', lineHeight: '1.6em' }}
+            dangerouslySetInnerHTML={{ __html: description }}
           />
         </div>
       )}
+
 
       {/* Pregunta */}
       {question && (
@@ -530,7 +546,7 @@ export default function JuegoEstudiante({
                 <div
                   key={`sequence-${i}`}
                   className={`sequence-item ${localGameCompleted
-                    ? (ans === correctSteps[i] ? 'correct' : 'incorrect')
+                    ? (normalizeText(ans) === normalizeText(correctSteps[i]) ? 'correct' : 'incorrect')
                     : ans
                       ? 'filled'
                       : 'empty'
@@ -551,7 +567,7 @@ export default function JuegoEstudiante({
                   )}
                   {localGameCompleted && (
                     <div className="sequence-result">
-                      {ans === correctSteps[i] ? '✅' : '❌'}
+                      {normalizeText(ans) === normalizeText(correctSteps[i]) ? '✅' : '❌'}
                     </div>
                   )}
                 </div>
@@ -563,55 +579,60 @@ export default function JuegoEstudiante({
 
       {/* Controles del juego */}
       <div className="game-controls">
-        {resetPreview && (
-          <button
-            onClick={resetPreview}
-            className="control-button secondary"
-            disabled={localIsLoading}
-          >
-            <span className="button-icon">⬅️</span>
-            Volver al editor
-          </button>
+        {/* Botón de verificar o reiniciar según estado del juego */}
+        {!localGameCompleted ? (
+          <>
+            <button
+              onClick={submitAnswers}
+              className={`control-button primary ${(!isSequenceComplete || localIsLoading) ? 'disabled' : ''}`}
+              disabled={!isSequenceComplete || localIsLoading}
+            >
+              {localIsLoading ? (
+                <>
+                  <span className="loading-spinner">⏳</span>
+                  Evaluando...
+                </>
+              ) : (
+                <>
+                  <span className="button-icon">✔️</span>
+                  Verificar respuestas
+                </>
+              )}
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={restartGame}
+              className="control-button success"
+              disabled={localIsLoading}
+            >
+              {localIsLoading ? (
+                <>
+                  <span className="loading-spinner">⏳</span>
+                  Reiniciando...
+                </>
+              ) : (
+                <>
+                  <span className="button-icon">🔄</span>
+                  Intentar de nuevo
+                </>
+              )}
+            </button>
+          </>
         )}
 
-        {!localGameCompleted ? (
-          <button
-            onClick={submitAnswers}
-            className={`control-button primary ${(!isSequenceComplete || localIsLoading) ? 'disabled' : ''}`}
-            disabled={!isSequenceComplete || localIsLoading}
-          >
-            {localIsLoading ? (
-              <>
-                <span className="loading-spinner">⏳</span>
-                Evaluando...
-              </>
-            ) : (
-              <>
-                <span className="button-icon">✔️</span>
-                Verificar respuestas
-              </>
-            )}
-          </button>
-        ) : (
-          <button
-            onClick={restartGame}
-            className="control-button success"
-            disabled={localIsLoading}
-          >
-            {localIsLoading ? (
-              <>
-                <span className="loading-spinner">⏳</span>
-                Reiniciando...
-              </>
-            ) : (
-              <>
-                <span className="button-icon">🔄</span>
-                Intentar de nuevo
-              </>
-            )}
-          </button>
-        )}
+        {/* Este botón estará siempre visible */}
+        <button
+          onClick={handleBackToActivities}
+          className="control-button secondary"
+          disabled={localIsLoading}
+        >
+          <span className="button-icon">⬅️</span>
+          Volver a actividades
+        </button>
       </div>
+
 
       {/* Retroalimentación */}
       {localShowFeedback && localFeedback && (
@@ -645,7 +666,7 @@ export default function JuegoEstudiante({
                 <div className="summary-item">
                   <span>Respuestas correctas:</span>
                   <span className="summary-value">
-                    {localUserAnswers.filter((ans, i) => ans === correctSteps[i]).length} / {correctSteps.length}
+                    {localUserAnswers.filter((ans, i) => normalizeText(ans) === normalizeText(correctSteps[i])).length} / {correctSteps.length}
                   </span>
                 </div>
               </div>
